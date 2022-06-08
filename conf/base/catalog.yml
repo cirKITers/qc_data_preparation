@@ -2,3 +2,43 @@
 #
 # Documentation for this file format can be found in "The Data Catalog"
 # Link: https://kedro.readthedocs.io/en/stable/data/data_catalog.html
+mnist_data:
+  type: qc_data_preparation.helpers.dataset.TensorFlowDataset
+  filepath: data/01_raw/mnist.npz
+data_preprocessing.sorted_normalized_test_x:
+  type: kedro.extras.datasets.pickle.PickleDataSet
+  filepath: data/05_model_input/sorted_normalized_test_x.pkl
+  backend: dill
+data_preprocessing.sorted_test_y: 
+  type: kedro.extras.datasets.pickle.PickleDataSet
+  filepath: data/02_intermediate/sorted_test_y.pkl
+  backend: dill
+data_preprocessing.shuffled_normalized_train_x:
+  type: kedro.extras.datasets.pickle.PickleDataSet
+  filepath: data/05_model_input/shuffled_normalized_train_x.pkl
+  backend: dill
+data_preprocessing.shuffled_train_y:
+  type: kedro.extras.datasets.pickle.PickleDataSet
+  filepath: data/02_intermediate/shuffled_train_y.pkl
+  backend: dill
+data_preprocessing.autoencoder_model:
+  type: kedro.extras.datasets.tensorflow.TensorFlowModelDataset
+  filepath: data/06_models/autoencoder_${formatted_classes}
+data_preprocessing.autoencoder_history:
+  type: kedro.extras.datasets.pickle.PickleDataSet
+  filepath: data/08_reporting/history_${formatted_classes}.pkl
+  backend: dill
+data_preprocessing.loss_curve:
+  type: kedro.extras.datasets.matplotlib.MatplotlibWriter
+  filepath: data/08_reporting/loss_curve.png
+data_preprocessing.accuracy_curve:
+  type: kedro.extras.datasets.matplotlib.MatplotlibWriter
+  filepath: data/08_reporting/accuracy_curve.png
+encoded_train_data:
+  type: kedro.extras.datasets.pickle.PickleDataSet
+  filepath: data/07_model_output/encoded_train_data_${formatted_classes}.pkl
+  backend: dill
+encoded_test_data:
+  type: kedro.extras.datasets.pickle.PickleDataSet
+  filepath: data/07_model_output/encoded_test_data_${formatted_classes}.pkl
+  backend: dill

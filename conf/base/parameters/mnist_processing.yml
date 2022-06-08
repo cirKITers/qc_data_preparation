@@ -1,5 +1,8 @@
-# This is a boilerplate parameters config generated for pipeline 'mnist_processing'
-# using Kedro 0.18.1.
-#
-# Documentation for this file format can be found in "Parameters"
-# Link: https://kedro.readthedocs.io/en/0.18.1/kedro_project_setup/configuration.html#parameters
+data_preprocessing:
+  number_of_features: 8
+  classes: ${classes|[1, 2, 3, 4]}
+  train_ipc: 500
+  test_ipc: 100
+  seed: 1337
+  training:
+    epochs: 300

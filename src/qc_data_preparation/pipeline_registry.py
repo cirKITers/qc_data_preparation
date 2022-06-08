@@ -2,6 +2,7 @@
 from typing import Dict
 
 from kedro.pipeline import Pipeline
+
 from qc_data_preparation.pipelines import mnist_processing
 
 
