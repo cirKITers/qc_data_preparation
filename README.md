@@ -1,4 +1,4 @@
-# Preparing classical input data for use in QML pipeliens
+# Preparing classical input data for use in QML pipelines
 
 ## Overview
 
