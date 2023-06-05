@@ -12,7 +12,7 @@ class TensorFlowDataset(AbstractDataSet):
     def __init__(self, filepath):
         self._filepath = PurePosixPath(filepath)
 
-    def _load(self) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    def _load(self) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]: #train_x, train_y, text_x, text_y
         if not self._exists():
             logger = logging.getLogger(__name__)
             logger.info(f"Downloading dataset {self._filepath} from TensorFlow")
