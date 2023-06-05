@@ -3,8 +3,9 @@ from typing import Any, Dict, List, Tuple
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
+import torch as pt
 
-from .autoencoder import Autoencoder
+from .autoencoder import TF_Autoencoder, PT_Autoencoder
 
 
 def concat_data(
@@ -72,21 +73,63 @@ def sort_interleaved(x_values, y_values, classes) -> Dict[str, np.ndarray]:
 
 
 def train_model(
-    train_x, test_x, number_of_features, epochs, seed
-) -> Tuple[tf.keras.models.Model, Dict]:
-    tf.random.set_seed(seed)
-    autoencoder = Autoencoder(number_of_features)
-    autoencoder.compile(
-        optimizer="adam", loss=tf.keras.losses.MeanSquaredError(), metrics=["accuracy"]
-    )
-    history = autoencoder.fit(
-        train_x, train_x, epochs=epochs, shuffle=True, validation_data=(test_x, test_x)
-    )
+    train_x, test_x, number_of_features, epochs, seed, fw_select
+) -> Tuple[tf.keras.models.Model | pt.nn.Module, Dict]:
+
+    if fw_select == "TensorFlow":
+        tf.random.set_seed(seed)
+        autoencoder = TF_Autoencoder(number_of_features)
+        autoencoder.compile(
+            optimizer="adam", loss=tf.keras.losses.MeanSquaredError(), metrics=["accuracy"]
+        )
+        history = autoencoder.fit(
+            train_x, train_x, epochs=epochs, shuffle=True, validation_data=(test_x, test_x)
+        )
+    elif fw_select == "PyTorch":
+        pt.manual_seed(seed)
+        autoencoder = PT_Autoencoder(number_of_features)
+
+        optimizer = pt.optim.Adam(autoencoder.parameters())
+        loss_fct = pt.nn.MSELoss()
+
+        train_dataset = pt.utils.data.TensorDataset(train_x, train_x)
+        test_dataset = pt.utils.data.TensorDataset(train_x, train_x)
+        
+        train_dataloader = pt.utils.data.DataLoader(train_dataset, shuffle=True, batch_size=32)
+        test_dataloader = pt.utils.data.DataLoader(test_dataset, shuffle=True, batch_size=32)
+
+        train_loss = []
+        validation_loss = []
+        for epoch in range(epochs):
+            epoch_loss = []
+            for data, target in train_dataloader:
+                output = autoencoder(data)
+                loss = loss_fct(output, target)
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
+
+                epoch_loss.append(loss.item())
+
+            train_loss.append(np.mean(epoch_loss)/len(train_dataloader))
+
+            with pt.no_grad():
+                epoch_loss = []
+                for data, target in test_dataloader:
+                    output = autoencoder(data)
+                    loss = loss_fct(output, target)
+
+                    epoch_loss.append(loss.item())
+
+                validation_loss.append(np.mean(epoch_loss)/len(test_dataloader))
+
+        history = [train_loss, validation_loss]
+
     return autoencoder, history.history
 
 
 def encode_data(
-    model: tf.keras.models.Model,
+    model: tf.keras.models.Model | pt.nn.Module,
     values_x: np.ndarray,
     values_y: np.ndarray,
     classes: List,
