@@ -87,6 +87,7 @@ def create_pipeline(**kwargs) -> Pipeline:
                     "params:number_of_features",
                     "params:training.epochs",
                     "params:seed",
+                    "params:fw_select",
                 ],
                 outputs=["autoencoder_model", "autoencoder_history"],
                 name="train_model",
