@@ -43,7 +43,16 @@ pytest = "^7.3.1"
 tensorflow = "^2.12.0"
 dill = "^0.3.6"
 matplotlib = "^3.7.1"
+torch = "^2.0.1+cpu"
+kedro-viz = "^6.2.0"
 
+
+
+[[tool.poetry.source]]
+name = "torch"
+url = "https://download.pytorch.org/whl/cpu"
+default = false
+secondary = true
 
 [build-system]
 requires = ["poetry-core"]
