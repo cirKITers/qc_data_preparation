@@ -40,15 +40,24 @@ class TF_Autoencoder(tf.keras.models.Model):
         return decoded
 
 class PT_Autoencoder(pt.nn.Module):
-    """Autoencoder with 3 hidden layers."""
+    """
+    Autoencoder based on the approach in
+    https://covalent.readthedocs.io/en/latest/tutorials/0_ClassicalMachineLearning/autoencoders/source.html
+    """
 
     def __init__(self, latent_space_dim):
         super(PT_Autoencoder, self).__init__()
         self.encoder = pt.nn.Sequential(
             pt.nn.Conv2d(
-                1, 16, 3, stride=2, padding=1
-            ),  # input size = 1x28x28 -> hidden size = 16x14x14
+                1, 8, 3, stride=1, padding=1
+            ),  # input size = 1x28x28 -> hidden size = 8x28x28
             pt.nn.ReLU(True),
+            pt.nn.Dropout(p=0.5),
+            pt.nn.Conv2d(
+                8, 16, 3, stride=2, padding=1
+            ),  # input size = 8x28x28 -> hidden size = 16x14x14
+            pt.nn.ReLU(True),
+            pt.nn.Dropout(p=0.3),
             pt.nn.Conv2d(
                 16, 32, 3, stride=2, padding=1
             ),  # hidden size = 16x14x14 -> hidden size = 32x7x7
@@ -74,9 +83,15 @@ class PT_Autoencoder(pt.nn.Module):
                 32, 16, 3, stride=2, padding=1, output_padding=1
             ),  # hidden size = 32x7x7 -> hidden size = 16x14x14
             pt.nn.ReLU(True),
+            pt.nn.Dropout(p=0.3),
             pt.nn.ConvTranspose2d(
-                16, 1, 3, stride=2, padding=1, output_padding=1
-            ),  # hidden size = 16x14x14 -> hidden size = 1x28x28
+                16, 8, 3, stride=2, padding=1, output_padding=1
+            ),  # hidden size = 16x14x14 -> hidden size = 8x28x28
+            pt.nn.ReLU(True),
+            pt.nn.Dropout(p=0.5),
+            pt.nn.ConvTranspose2d(
+                8, 1, 3, stride=1, padding=1, output_padding=0
+            ),  # hidden size = 8x28x28 -> hidden size = 1x28x28
             pt.nn.Sigmoid(),  # output with pixels in [0,1]
         )
 
