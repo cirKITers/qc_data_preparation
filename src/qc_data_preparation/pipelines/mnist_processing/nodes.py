@@ -102,6 +102,7 @@ def train_model(
         # defining custom ssim to set the parameters accordingly
         # note that we are not using multiscale_ssim although tf should make use of batches
         # using multiscale_ssim however, results in error
+        @tf.keras.utils.register_keras_serializable() # we need that for saving the model (load via {'ssim':ssim})
         def ssim(pred, target):
             return tf.image.ssim(pred, target, max_val=1.0, filter_size=ssim_filter_size, filter_sigma=ssim_sigma, k1=ssim_k1, k2=ssim_k2)
 
