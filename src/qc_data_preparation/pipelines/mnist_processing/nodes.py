@@ -85,6 +85,9 @@ def train_model(
         history = autoencoder.fit(
             train_x, train_x, epochs=epochs, shuffle=True, validation_data=(test_x, test_x)
         )
+
+        history = history.history
+
     elif fw_select == "PyTorch":
         pt.manual_seed(seed)
         autoencoder = PT_Autoencoder(number_of_features)
@@ -92,16 +95,32 @@ def train_model(
         optimizer = pt.optim.Adam(autoencoder.parameters())
         loss_fct = pt.nn.MSELoss()
 
-        train_dataset = pt.utils.data.TensorDataset(train_x, train_x)
-        test_dataset = pt.utils.data.TensorDataset(train_x, train_x)
+        train_x = pt.Tensor(train_x)
+        test_x = pt.Tensor(test_x)
+
+        train_x = train_x.reshape(train_x.shape[0], 1, train_x.shape[1], train_x.shape[2])
+        test_x = test_x.reshape(test_x.shape[0], 1, test_x.shape[1], test_x.shape[2])
+
+        train_dataset = pt.utils.data.TensorDataset(pt.Tensor(train_x), pt.Tensor(train_x))
+        test_dataset = pt.utils.data.TensorDataset(pt.Tensor(test_x), pt.Tensor(test_x))
         
         train_dataloader = pt.utils.data.DataLoader(train_dataset, shuffle=True, batch_size=32)
         test_dataloader = pt.utils.data.DataLoader(test_dataset, shuffle=True, batch_size=32)
 
-        train_loss = []
-        validation_loss = []
+        autoencoder.train()
+
+        history={
+            "loss":[],
+            "accuracy":[],
+            "val_loss":[],
+            "val_accuracy":[]
+        }
+
+        ssim = torchmetrics.StructuralSimilarityIndexMeasure()
+
         for epoch in range(epochs):
             epoch_loss = []
+            epoch_accuracy = []
             for data, target in train_dataloader:
                 output = autoencoder(data)
                 loss = loss_fct(output, target)
@@ -110,22 +129,25 @@ def train_model(
                 optimizer.step()
 
                 epoch_loss.append(loss.item())
+                epoch_accuracy.append(ssim(output, target).item())
 
-            train_loss.append(np.mean(epoch_loss)/len(train_dataloader))
+            history['loss'].append(np.mean(epoch_loss))
+            history['accuracy'].append(np.mean(epoch_accuracy))
 
             with pt.no_grad():
                 epoch_loss = []
+                epoch_accuracy = []
                 for data, target in test_dataloader:
                     output = autoencoder(data)
                     loss = loss_fct(output, target)
 
                     epoch_loss.append(loss.item())
+                    epoch_accuracy.append(ssim(output, target).item())
 
-                validation_loss.append(np.mean(epoch_loss)/len(test_dataloader))
+            history['val_loss'].append(np.mean(epoch_loss))
+            history['val_accuracy'].append(np.mean(epoch_accuracy))
 
-        history = [train_loss, validation_loss]
-
-    return autoencoder, history.history
+    return autoencoder, history
 
 
 def encode_data(
