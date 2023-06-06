@@ -226,14 +226,14 @@ def generate_loss_curve(history: Dict):
     return plt
 
 
-def generate_accuracy_curve(history: Dict):
-    loss_train = history["accuracy"]
-    loss_val = history["val_accuracy"]
+def generate_ssim_curve(history: Dict):
+    loss_train = history["ssim"]
+    loss_val = history["val_ssim"]
     epochs = range(1, len(list(history.values())[0]) + 1)
-    plt.plot(epochs, loss_train, "g", label="Training accuracy")
-    plt.plot(epochs, loss_val, "b", label="Validation accuracy")
-    plt.title("Training and Validation accuracy")
+    plt.plot(epochs, loss_train, "g", label="Training SSIM")
+    plt.plot(epochs, loss_val, "b", label="Validation SSIM")
+    plt.title("Training and Validation SSIM")
     plt.xlabel("Epochs")
-    plt.ylabel("Accuracy")
+    plt.ylabel("SSIM")
     plt.legend()
     return plt
