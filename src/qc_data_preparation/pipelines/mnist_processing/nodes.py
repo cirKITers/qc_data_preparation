@@ -64,6 +64,16 @@ def normalize_data(x_values: np.ndarray) -> np.ndarray:
     return np.divide(x_values, 255)
 
 def add_channel_data(x_values: np.ndarray) -> np.ndarray:
+    """
+    Adding a (redundant) channel (dimension) to the data so that we can work on channels within the
+    convolutional AE network
+
+    Args:
+        x_values (np.ndarray): data of shape [BxWxH]
+
+    Returns:
+        np.ndarray: data of shape [Bx1xWxH]
+    """    
     return x_values.reshape(x_values.shape[0], 1, x_values.shape[1], x_values.shape[2])
 
 def sort_interleaved(x_values, y_values, classes) -> Dict[str, np.ndarray]:
@@ -98,17 +108,19 @@ def train_model(
         optimizer = pt.optim.Adam(autoencoder.parameters())
         loss_fct = pt.nn.MSELoss()
 
+        # adding the channel dimension
         train_x = pt.Tensor(add_channel_data(train_x))
         test_x = pt.Tensor(add_channel_data(test_x))
 
-        train_dataset = pt.utils.data.TensorDataset(pt.Tensor(train_x), pt.Tensor(train_x))
-        test_dataset = pt.utils.data.TensorDataset(pt.Tensor(test_x), pt.Tensor(test_x))
+        # generate two datasets with x=y
+        train_dataset = pt.utils.data.TensorDataset(train_x, train_x)
+        test_dataset = pt.utils.data.TensorDataset(test_x, test_x)
         
+        # from those datasets, generate data loaders that take care of the shuffling and splitting in batches
         train_dataloader = pt.utils.data.DataLoader(train_dataset, shuffle=True, batch_size=32)
         test_dataloader = pt.utils.data.DataLoader(test_dataset, shuffle=True, batch_size=32)
 
-        autoencoder.train()
-
+        # mimic the structure from tensorflow
         history={
             "loss":[],
             "accuracy":[],
@@ -119,33 +131,45 @@ def train_model(
         ssim = torchmetrics.StructuralSimilarityIndexMeasure()
 
         for epoch in range(epochs):
+            # put the model in training mode
+            autoencoder.train()
+
             epoch_loss = []
             epoch_accuracy = []
             for data, target in train_dataloader:
-                output = autoencoder(data)
-                loss = loss_fct(output, target)
-                optimizer.zero_grad()
-                loss.backward()
-                optimizer.step()
+                output = autoencoder(data)  # forward
+                loss = loss_fct(output, target) # loss calculation
+                optimizer.zero_grad() # zero gradients before optimization
+                loss.backward() # calculate loss
+                optimizer.step() # backward
 
                 epoch_loss.append(loss.item())
                 epoch_accuracy.append(ssim(output, target).item())
 
+            # get the mean loss and accuracy from the batch data
             history['loss'].append(np.mean(epoch_loss))
             history['accuracy'].append(np.mean(epoch_accuracy))
 
+            # put the model in validation/test mode
+            autoencoder.eval()
+
+            # do not care about gradients now
             with pt.no_grad():
                 epoch_loss = []
                 epoch_accuracy = []
                 for data, target in test_dataloader:
-                    output = autoencoder(data)
-                    loss = loss_fct(output, target)
+                    output = autoencoder(data) # forward
+                    loss = loss_fct(output, target) # loss calculation
 
-                    epoch_loss.append(loss.item())
-                    epoch_accuracy.append(ssim(output, target).item())
+                    epoch_loss.append(loss.item()) # detach loss
+                    epoch_accuracy.append(ssim(output, target).item()) # calculate similarity
 
+            # get the mean loss and accuracy from the batch data
             history['val_loss'].append(np.mean(epoch_loss))
             history['val_accuracy'].append(np.mean(epoch_accuracy))
+    else:
+        raise RuntimeError(f"Unknown framework selected: {fw_select}. Framework must be one of [PyTorch, TensorFlow]")
+
 
     return autoencoder, history
 
@@ -156,12 +180,16 @@ def encode_data(
     values_y: np.ndarray,
     classes: List,
 ) -> Dict[str, Any]:
+
+    # check based on the type if we are using TF or PT framework
     if type(model) == PT_Autoencoder:
-        with pt.no_grad():
+        with pt.no_grad(): # have to use no_grad as the tensor requires grad otherwise
             features = model.encoder(pt.Tensor(add_channel_data(values_x))).numpy()
-    else:
+    elif type(model) == TF_Autoencoder:
         features = model.encoder(values_x).numpy()
-    
+    else:
+        raise RuntimeError(f"Unknown model type: {type(model)}. Model must be one of [PT_Autoencoder, TF_Autoencoder]")
+
     return {
         "labels": values_y,
         "features": features,
