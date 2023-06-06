@@ -96,6 +96,8 @@ def train_model(
     ssim_k1 = 0.01
     ssim_k2 = 0.03
 
+    batch_size=32
+
     if fw_select == "TensorFlow":
         tf.random.set_seed(seed)
 
@@ -111,7 +113,7 @@ def train_model(
             optimizer="adam", loss=tf.keras.losses.MeanSquaredError(), metrics=[ssim]
         )
         history = autoencoder.fit(
-            train_x, train_x, epochs=epochs, shuffle=True, validation_data=(test_x, test_x)
+            train_x, train_x, epochs=epochs, shuffle=True, validation_data=(test_x, test_x), batch_size=batch_size
         )
 
         history = history.history
