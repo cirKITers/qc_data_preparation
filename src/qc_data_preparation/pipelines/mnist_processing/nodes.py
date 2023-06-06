@@ -89,11 +89,25 @@ def train_model(
     train_x, test_x, number_of_features, epochs, seed, fw_select
 ) -> Tuple[tf.keras.models.Model | pt.nn.Module, Dict]:
 
+    ssim_sigma = 1.5
+    # note that for torch, we cannot explicitly define the size of the gaussian filter
+    # for tf however, there is no different option than using gaussian
+    ssim_filter_size = 11 
+    ssim_k1 = 0.01
+    ssim_k2 = 0.03
+
     if fw_select == "TensorFlow":
         tf.random.set_seed(seed)
+
+        # defining custom ssim to set the parameters accordingly
+        # note that we are not using multiscale_ssim although tf should make use of batches
+        # using multiscale_ssim however, results in error
+        def ssim(pred, target):
+            return tf.image.ssim(pred, target, max_val=1.0, filter_size=ssim_filter_size, filter_sigma=ssim_sigma, k1=ssim_k1, k2=ssim_k2)
+
         autoencoder = TF_Autoencoder(number_of_features)
         autoencoder.compile(
-            optimizer="adam", loss=tf.keras.losses.MeanSquaredError(), metrics=["accuracy"]
+            optimizer="adam", loss=tf.keras.losses.MeanSquaredError(), metrics=[ssim]
         )
         history = autoencoder.fit(
             train_x, train_x, epochs=epochs, shuffle=True, validation_data=(test_x, test_x)
@@ -110,7 +124,7 @@ def train_model(
         # MSE loss as in TF implementation
         loss_fct = pt.nn.MSELoss()
         # use the SSIM for calculating what is the "accuracy" in TensorFlow
-        ssim = torchmetrics.StructuralSimilarityIndexMeasure()
+        ssim = torchmetrics.StructuralSimilarityIndexMeasure(sigma=ssim_sigma, kernel_size=ssim_filter_size, k1=ssim_k1, k2=ssim_k2, data_range=1.0)
 
         # adding the channel dimension
         train_x = pt.Tensor(add_channel_data(train_x))
