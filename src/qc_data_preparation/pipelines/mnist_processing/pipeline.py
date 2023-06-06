@@ -121,7 +121,7 @@ def create_pipeline(**kwargs) -> Pipeline:
                 name="generate_loss_curve",
             ),
             node(
-                generate_accuracy_curve,
+                generate_ssim_curve,
                 inputs="autoencoder_history",
                 outputs="accuracy_curve",
                 name="generate_accuracy_curve",
