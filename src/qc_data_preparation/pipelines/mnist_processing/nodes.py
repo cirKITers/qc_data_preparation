@@ -105,8 +105,12 @@ def train_model(
         pt.manual_seed(seed)
         autoencoder = PT_Autoencoder(number_of_features)
 
+        # Adam optimizer as in TF implementation
         optimizer = pt.optim.Adam(autoencoder.parameters())
+        # MSE loss as in TF implementation
         loss_fct = pt.nn.MSELoss()
+        # use the SSIM for calculating what is the "accuracy" in TensorFlow
+        ssim = torchmetrics.StructuralSimilarityIndexMeasure()
 
         # adding the channel dimension
         train_x = pt.Tensor(add_channel_data(train_x))
@@ -127,8 +131,6 @@ def train_model(
             "val_loss":[],
             "val_accuracy":[]
         }
-
-        ssim = torchmetrics.StructuralSimilarityIndexMeasure()
 
         for epoch in range(epochs):
             # put the model in training mode
