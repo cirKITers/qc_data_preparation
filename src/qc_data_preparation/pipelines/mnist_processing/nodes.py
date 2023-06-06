@@ -63,6 +63,8 @@ def split_data(
 def normalize_data(x_values: np.ndarray) -> np.ndarray:
     return np.divide(x_values, 255)
 
+def add_channel_data(x_values: np.ndarray) -> np.ndarray:
+    return x_values.reshape(x_values.shape[0], 1, x_values.shape[1], x_values.shape[2])
 
 def sort_interleaved(x_values, y_values, classes) -> Dict[str, np.ndarray]:
     sort_order = []
@@ -96,11 +98,8 @@ def train_model(
         optimizer = pt.optim.Adam(autoencoder.parameters())
         loss_fct = pt.nn.MSELoss()
 
-        train_x = pt.Tensor(train_x)
-        test_x = pt.Tensor(test_x)
-
-        train_x = train_x.reshape(train_x.shape[0], 1, train_x.shape[1], train_x.shape[2])
-        test_x = test_x.reshape(test_x.shape[0], 1, test_x.shape[1], test_x.shape[2])
+        train_x = pt.Tensor(add_channel_data(train_x))
+        test_x = pt.Tensor(add_channel_data(test_x))
 
         train_dataset = pt.utils.data.TensorDataset(pt.Tensor(train_x), pt.Tensor(train_x))
         test_dataset = pt.utils.data.TensorDataset(pt.Tensor(test_x), pt.Tensor(test_x))
@@ -159,7 +158,7 @@ def encode_data(
 ) -> Dict[str, Any]:
     if type(model) == PT_Autoencoder:
         with pt.no_grad():
-            features = model.encoder(pt.Tensor(values_x.reshape(values_x.shape[0], 1, values_x.shape[1], values_x.shape[2]))).numpy()
+            features = model.encoder(pt.Tensor(add_channel_data(values_x))).numpy()
     else:
         features = model.encoder(values_x).numpy()
     
