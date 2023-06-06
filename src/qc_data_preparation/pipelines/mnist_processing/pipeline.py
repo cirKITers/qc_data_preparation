@@ -4,7 +4,7 @@ from kedro.pipeline.modular_pipeline import pipeline
 from .nodes import (
     concat_data,
     encode_data,
-    generate_accuracy_curve,
+    generate_ssim_curve,
     generate_loss_curve,
     normalize_data,
     shuffle_data,
