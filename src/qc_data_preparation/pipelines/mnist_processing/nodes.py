@@ -113,7 +113,7 @@ def train_model(
             optimizer="adam", loss=tf.keras.losses.MeanSquaredError(), metrics=[ssim]
         )
         history = autoencoder.fit(
-            train_x, train_x, epochs=epochs, shuffle=True, validation_data=(test_x, test_x), batch_size=batch_size
+            train_x, train_x, epochs=epochs, shuffle=True, validation_data=(test_x, test_x), batch_size=batch_size, verbose=0
         )
 
         history = history.history
