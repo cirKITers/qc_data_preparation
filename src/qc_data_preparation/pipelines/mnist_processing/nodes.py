@@ -135,15 +135,15 @@ def train_model(
         test_dataset = pt.utils.data.TensorDataset(test_x, test_x)
         
         # from those datasets, generate data loaders that take care of the shuffling and splitting in batches
-        train_dataloader = pt.utils.data.DataLoader(train_dataset, shuffle=True, batch_size=32)
-        test_dataloader = pt.utils.data.DataLoader(test_dataset, shuffle=True, batch_size=32)
+        train_dataloader = pt.utils.data.DataLoader(train_dataset, shuffle=True, batch_size=batch_size)
+        test_dataloader = pt.utils.data.DataLoader(test_dataset, shuffle=True, batch_size=batch_size)
 
         # mimic the structure from tensorflow
         history={
             "loss":[],
-            "accuracy":[],
+            "ssim":[],
             "val_loss":[],
-            "val_accuracy":[]
+            "val_ssim":[]
         }
 
         for epoch in range(epochs):
@@ -151,7 +151,7 @@ def train_model(
             autoencoder.train()
 
             epoch_loss = []
-            epoch_accuracy = []
+            epoch_ssim = []
             for data, target in train_dataloader:
                 output = autoencoder(data)  # forward
                 loss = loss_fct(output, target) # loss calculation
@@ -160,11 +160,11 @@ def train_model(
                 optimizer.step() # backward
 
                 epoch_loss.append(loss.item())
-                epoch_accuracy.append(ssim(output, target).item())
+                epoch_ssim.append(ssim(output, target).item())
 
-            # get the mean loss and accuracy from the batch data
+            # get the mean loss and ssim from the batch data
             history['loss'].append(np.mean(epoch_loss))
-            history['accuracy'].append(np.mean(epoch_accuracy))
+            history['ssim'].append(np.mean(epoch_ssim))
 
             # put the model in validation/test mode
             autoencoder.eval()
@@ -172,17 +172,17 @@ def train_model(
             # do not care about gradients now
             with pt.no_grad():
                 epoch_loss = []
-                epoch_accuracy = []
+                epoch_ssim = []
                 for data, target in test_dataloader:
                     output = autoencoder(data) # forward
                     loss = loss_fct(output, target) # loss calculation
 
                     epoch_loss.append(loss.item()) # detach loss
-                    epoch_accuracy.append(ssim(output, target).item()) # calculate similarity
+                    epoch_ssim.append(ssim(output, target).item()) # calculate similarity
 
-            # get the mean loss and accuracy from the batch data
+            # get the mean loss and ssim from the batch data
             history['val_loss'].append(np.mean(epoch_loss))
-            history['val_accuracy'].append(np.mean(epoch_accuracy))
+            history['val_ssim'].append(np.mean(epoch_ssim))
     else:
         raise RuntimeError(f"Unknown framework selected: {fw_select}. Framework must be one of [PyTorch, TensorFlow]")
 
