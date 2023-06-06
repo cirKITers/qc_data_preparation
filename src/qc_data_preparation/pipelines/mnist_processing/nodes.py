@@ -156,9 +156,15 @@ def encode_data(
     values_y: np.ndarray,
     classes: List,
 ) -> Dict[str, Any]:
+    if type(model) == PT_Autoencoder:
+        with pt.no_grad():
+            features = model.encoder(pt.Tensor(values_x.reshape(values_x.shape[0], 1, values_x.shape[1], values_x.shape[2]))).numpy()
+    else:
+        features = model.encoder(values_x).numpy()
+    
     return {
         "labels": values_y,
-        "features": model.encoder(values_x).numpy(),
+        "features": features,
         "classes": classes,
     }
 
