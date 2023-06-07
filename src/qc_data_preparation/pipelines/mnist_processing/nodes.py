@@ -6,7 +6,8 @@ import tensorflow as tf
 import torch as pt
 import torchmetrics
 
-from .autoencoder import TF_Autoencoder, PT_Autoencoder
+from .autoencoder import TF_Autoencoder
+from .autoencoder import PT_Autoencoder_Exp as PT_Autoencoder
 
 
 def concat_data(
