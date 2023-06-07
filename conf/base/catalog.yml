@@ -29,11 +29,11 @@ data_preprocessing.autoencoder_history:
   filepath: data/08_reporting/history_${formatted_classes}.pkl
   backend: dill
 data_preprocessing.loss_curve:
-  type: kedro.extras.datasets.matplotlib.MatplotlibWriter
-  filepath: data/08_reporting/loss_curve.png
+  type: kedro.extras.datasets.plotly.JSONDataSet
+  filepath: data/08_reporting/loss_curve.json
 data_preprocessing.accuracy_curve:
-  type: kedro.extras.datasets.matplotlib.MatplotlibWriter
-  filepath: data/08_reporting/accuracy_curve.png
+  type: kedro.extras.datasets.plotly.JSONDataSet
+  filepath: data/08_reporting/accuracy_curve.json
 encoded_train_data:
   type: kedro.extras.datasets.pickle.PickleDataSet
   filepath: data/07_model_output/encoded_train_data_${formatted_classes}.pkl
