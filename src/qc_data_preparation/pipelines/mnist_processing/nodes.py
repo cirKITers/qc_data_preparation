@@ -223,13 +223,6 @@ def generate_loss_curve(history: Dict):
     loss_val = history["val_loss"]
     epochs = range(1, len(list(history.values())[0]) + 1)
 
-    # plt.plot(epochs, loss_train, "g", label="Training loss")
-    # plt.plot(epochs, loss_val, "b", label="Validation loss")
-    # plt.title("Training and Validation loss")
-    # plt.xlabel("Epochs")
-    # plt.ylabel("Loss")
-    # plt.legend()
-
     plt = go.Figure(
         [
             go.Scatter(
@@ -259,13 +252,6 @@ def generate_ssim_curve(history: Dict):
     ssim_train = history["ssim"]
     ssim_val = history["val_ssim"]
     epochs = range(1, len(list(history.values())[0]) + 1)
-
-    # plt.plot(epochs, loss_train, "g", label="Training SSIM")
-    # plt.plot(epochs, loss_val, "b", label="Validation SSIM")
-    # plt.title("Training and Validation SSIM")
-    # plt.xlabel("Epochs")
-    # plt.ylabel("SSIM")
-    # plt.legend()
 
     plt = go.Figure(
         [
