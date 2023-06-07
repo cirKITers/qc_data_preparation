@@ -88,7 +88,7 @@ def sort_interleaved(x_values, y_values, classes) -> Dict[str, np.ndarray]:
 
 def train_model(
     train_x, test_x, number_of_features, epochs, seed, fw_select
-) -> Tuple[tf.keras.models.Model | pt.nn.Module, Dict]:
+) -> "Tuple[tf.keras.models.Model | pt.nn.Module, Dict]":
 
     ssim_sigma = 1.5
     # note that for torch, we cannot explicitly define the size of the gaussian filter
@@ -195,7 +195,7 @@ def train_model(
 
 
 def encode_data(
-    model: tf.keras.models.Model | pt.nn.Module,
+    model: "tf.keras.models.Model | pt.nn.Module",
     values_x: np.ndarray,
     values_y: np.ndarray,
     classes: List,
