@@ -6,4 +6,4 @@ data_preprocessing:
   seed: 1337
   fw_select: PyTorch # PyTorch | TensorFlow
   training:
-    epochs: 300
+    epochs: 800
