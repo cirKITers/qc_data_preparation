@@ -112,19 +112,21 @@ class PT_Autoencoder_Exp(pt.nn.Module):
             pt.nn.Conv2d(
                 1, 8, 3, stride=1, padding=1
             ),  # input size = 1x28x28 -> hidden size = 8x28x28
-            pt.nn.ReLU(True),
             pt.nn.Dropout(p=0.5),
+            pt.nn.ReLU(True),
             pt.nn.Conv2d(
                 8, 16, 3, stride=2, padding=1
             ),  # input size = 8x28x28 -> hidden size = 16x14x14
+            pt.nn.Dropout(p=0.4),
             pt.nn.ReLU(True),
-            pt.nn.Dropout(p=0.3),
             pt.nn.Conv2d(
                 16, 32, 3, stride=2, padding=1
             ),  # hidden size = 16x14x14 -> hidden size = 32x7x7
+            pt.nn.Dropout(p=0.3),
             pt.nn.ReLU(True),
             pt.nn.Conv2d(32, 64, 7),  # hidden size = 32x7x7 -> hidden size = 64x1x1
             pt.nn.Tanh(),
+            pt.nn.Dropout(p=0.2),
             pt.nn.Flatten(),  # hidden size = 64x1x1 -> hidden size = 64
             pt.nn.Linear(64, 16),  # hidden size = 64 -> hidden size = 16
             pt.nn.Tanh(),
@@ -132,31 +134,33 @@ class PT_Autoencoder_Exp(pt.nn.Module):
             pt.nn.Tanh()
         )
 
-        self.pre_decoder_a = pt.nn.Sequential(
-            pt.nn.Linear(latent_space_dim, 16),  # hidden size = latent_space_dim -> hidden size = 16
-            pt.nn.ReLU(True),
-            pt.nn.Linear(16, 32),  # hidden size = 16 -> hidden size = 64
-            pt.nn.ReLU(True),
-            pt.nn.Unflatten(1, (32, 1, 1)),
-        )
-        self.pre_decoder_b = pt.nn.Sequential(
-            pt.nn.Linear(latent_space_dim, 32),  # hidden size = latent_space_dim -> hidden size = 16
-            pt.nn.ReLU(True),
-            pt.nn.Unflatten(1, (32, 1, 1)),
-        )
         self.decoder = pt.nn.Sequential(
-            pt.nn.ConvTranspose2d(64, 32, 7),  # input size = latent_space_dim x1x1 -> hidden size = 32x7x7
+            pt.nn.Linear(latent_space_dim, 16),  # hidden size = latent_space_dim x1x1 -> hidden size = 64x1x1
+            pt.nn.ReLU(True),
+            pt.nn.Linear(16, 64),  # hidden size = 64x1x1 -> hidden size = latent_space_dim x1x1
+            pt.nn.ReLU(True),
+            pt.nn.Linear(64, 128),  # hidden size = 64x1x1 -> hidden size = latent_space_dim x1x1
+            pt.nn.ReLU(True),
+            pt.nn.Unflatten(1, (128, 1, 1)),
+            pt.nn.ConvTranspose2d(128, 64, 3),  # input size = 128x1x1 -> hidden size = 64x3x3
+            pt.nn.Dropout(p=0.1),
+            pt.nn.ReLU(True),
+            pt.nn.ConvTranspose2d(64, 48, 3),  # input size = 64x1x1 -> hidden size = 48x5x5
+            pt.nn.Dropout(p=0.2),
+            pt.nn.ReLU(True),
+            pt.nn.ConvTranspose2d(48, 32, 3),  # hidden size = 48x5x5 -> hidden size = 32x7x7
+            pt.nn.Dropout(p=0.3),
             pt.nn.ReLU(True),
             pt.nn.ConvTranspose2d(
                 32, 16, 3, stride=2, padding=1, output_padding=1
             ),  # hidden size = 32x7x7 -> hidden size = 16x14x14
+            pt.nn.Dropout(p=0.4),
             pt.nn.ReLU(True),
-            pt.nn.Dropout(p=0.3),
             pt.nn.ConvTranspose2d(
                 16, 8, 3, stride=2, padding=1, output_padding=1
             ),  # hidden size = 16x14x14 -> hidden size = 8x28x28
-            pt.nn.ReLU(True),
             pt.nn.Dropout(p=0.5),
+            pt.nn.ReLU(True),
             pt.nn.ConvTranspose2d(
                 8, 1, 3, stride=1, padding=1, output_padding=0
             ),  # hidden size = 8x28x28 -> hidden size = 1x28x28
@@ -165,9 +169,5 @@ class PT_Autoencoder_Exp(pt.nn.Module):
 
     def forward(self, x):
         encoded = self.encoder(x)
-
-        pre_decoded_a = self.pre_decoder_a(encoded)
-        pre_decoded_b = self.pre_decoder_b(encoded)
-
-        decoded = self.decoder(pt.cat([pre_decoded_a, pre_decoded_b], dim=1))
+        decoded = self.decoder(encoded)
         return decoded
