@@ -51,13 +51,13 @@ class PT_Autoencoder(pt.nn.Module):
             pt.nn.Conv2d(
                 1, 8, 3, stride=1, padding=1
             ),  # input size = 1x28x28 -> hidden size = 8x28x28
-            pt.nn.ReLU(True),
             pt.nn.Dropout(p=0.5),
+            pt.nn.ReLU(True),
             pt.nn.Conv2d(
                 8, 16, 3, stride=2, padding=1
             ),  # input size = 8x28x28 -> hidden size = 16x14x14
-            pt.nn.ReLU(True),
             pt.nn.Dropout(p=0.3),
+            pt.nn.ReLU(True),
             pt.nn.Conv2d(
                 16, 32, 3, stride=2, padding=1
             ),  # hidden size = 16x14x14 -> hidden size = 32x7x7
@@ -82,13 +82,13 @@ class PT_Autoencoder(pt.nn.Module):
             pt.nn.ConvTranspose2d(
                 32, 16, 3, stride=2, padding=1, output_padding=1
             ),  # hidden size = 32x7x7 -> hidden size = 16x14x14
-            pt.nn.ReLU(True),
             pt.nn.Dropout(p=0.3),
+            pt.nn.ReLU(True),
             pt.nn.ConvTranspose2d(
                 16, 8, 3, stride=2, padding=1, output_padding=1
             ),  # hidden size = 16x14x14 -> hidden size = 8x28x28
-            pt.nn.ReLU(True),
             pt.nn.Dropout(p=0.5),
+            pt.nn.ReLU(True),
             pt.nn.ConvTranspose2d(
                 8, 1, 3, stride=1, padding=1, output_padding=0
             ),  # hidden size = 8x28x28 -> hidden size = 1x28x28
