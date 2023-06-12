@@ -1,4 +1,5 @@
 data_science:
+  classes: ${classes}
   number_of_features: 8
   seed: 1337
   fw_select: PyTorch # PyTorch | TensorFlow
