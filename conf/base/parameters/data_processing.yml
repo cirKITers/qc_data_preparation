@@ -1,0 +1,5 @@
+data_processing:
+  classes: ${classes|[0, 1, 2, 3]}
+  seed: 1337
+  train_ipc: 500
+  test_ipc: 100

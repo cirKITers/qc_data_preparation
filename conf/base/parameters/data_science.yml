@@ -1,8 +1,5 @@
-data_preprocessing:
+data_science:
   number_of_features: 8
-  classes: ${classes|[0, 1, 2, 3]}
-  train_ipc: 500
-  test_ipc: 100
   seed: 1337
   fw_select: PyTorch # PyTorch | TensorFlow
   training:
