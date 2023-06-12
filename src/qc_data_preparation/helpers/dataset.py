@@ -33,4 +33,6 @@ class TensorFlowDataset(AbstractDataSet):
         return Path(self._filepath.as_posix()).exists()
 
     def _describe(self) -> Dict[str, Any]:
-        ...
+        return dict(
+            filepath=self._filepath
+        )
