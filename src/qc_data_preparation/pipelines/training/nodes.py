@@ -24,17 +24,8 @@ def add_channel_data(x_values: np.ndarray) -> np.ndarray:
 
 
 def train_tf_model(
-    train_x, test_x, number_of_features, epochs, seed
+    train_x, test_x, number_of_features, epochs, seed, batch_size, ssim_filter_size, ssim_sigma, ssim_k1, ssim_k2
 ) -> Tuple[tf.keras.models.Model, Dict]:
-
-    ssim_sigma = 1.5
-    # note that for torch, we cannot explicitly define the size of the gaussian filter
-    # for tf however, there is no different option than using gaussian
-    ssim_filter_size = 11 
-    ssim_k1 = 0.01
-    ssim_k2 = 0.03
-
-    batch_size=32
 
     tf.random.set_seed(seed)
 
@@ -59,19 +50,11 @@ def train_tf_model(
 
 
 def train_pt_model(
-    train_x, test_x, number_of_features, epochs, seed
+    train_x, test_x, number_of_features, epochs, seed, batch_size, ssim_filter_size, ssim_sigma, ssim_k1, ssim_k2
 ) -> Tuple[pt.nn.Module, Dict]:
 
-    ssim_sigma = 1.5
-    # note that for torch, we cannot explicitly define the size of the gaussian filter
-    # for tf however, there is no different option than using gaussian
-    ssim_filter_size = 11 
-    ssim_k1 = 0.01
-    ssim_k2 = 0.03
-
-    batch_size=32
-
     pt.manual_seed(seed)
+    
     autoencoder = PT_Autoencoder(number_of_features)
 
     # Adam optimizer as in TF implementation
