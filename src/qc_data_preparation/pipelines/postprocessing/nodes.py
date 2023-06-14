@@ -9,7 +9,18 @@ from ..training.autoencoder import TF_Autoencoder
 from ..training.autoencoder import PT_Autoencoder_Exp as PT_Autoencoder
 
 
+def add_channel_data(x_values: np.ndarray) -> np.ndarray:
+    """
+    Adding a (redundant) channel (dimension) to the data so that we can work on channels within the
+    convolutional AE network
 
+    Args:
+        x_values (np.ndarray): data of shape [BxWxH]
+
+    Returns:
+        np.ndarray: data of shape [Bx1xWxH]
+    """    
+    return x_values.reshape(x_values.shape[0], 1, x_values.shape[1], x_values.shape[2])
 
 def encode_data(
     model: "tf.keras.models.Model | pt.nn.Module",
