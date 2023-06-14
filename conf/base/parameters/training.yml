@@ -1,0 +1,4 @@
+training:
+  number_of_features: 8
+  seed: 1337
+  epochs: 800

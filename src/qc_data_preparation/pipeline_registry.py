@@ -3,7 +3,7 @@ from typing import Dict
 
 from kedro.pipeline import Pipeline
 
-from qc_data_preparation.pipelines import data_processing, data_science
+from qc_data_preparation.pipelines import preprocessing, training, postprocessing
 
 
 def register_pipelines() -> Dict[str, Pipeline]:
@@ -12,10 +12,13 @@ def register_pipelines() -> Dict[str, Pipeline]:
     Returns:
         A mapping from a pipeline name to a ``Pipeline`` object.
     """
-    data_processing_pipeline = data_processing.create_pipeline()
-    data_science_pipeline = data_science.create_pipeline()
+    preprocessing_pipeline = preprocessing.create_pipeline()
+    training_pipeline = training.create_pipeline()
+    postprocessing_pipeline = postprocessing.create_pipeline()
     return {
-        "data_processing_pipeline": data_processing_pipeline,
-        "data_science_pipeline": data_science_pipeline,
-        "__default__": data_processing_pipeline + data_science_pipeline,
+        "preprocessing": preprocessing_pipeline,
+        "tf_training": training_pipeline["tf_training_pipeline"],
+        "pt_training": training_pipeline["pt_training_pipeline"],
+        "postprocessing": postprocessing_pipeline,
+        "__default__": preprocessing_pipeline + training_pipeline["pt_training_pipeline"] + postprocessing_pipeline,
     }

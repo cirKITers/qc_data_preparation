@@ -83,5 +83,5 @@ def create_pipeline(**kwargs) -> Pipeline:
             "shuffled_train_y": "shuffled_train_y",
             "sorted_test_y": "sorted_test_y",
         },
-        namespace="data_processing",
+        namespace="preprocessing",
     )

@@ -1,4 +1,4 @@
-data_processing:
+preprocessing:
   classes: ${classes|[0, 1, 2, 3]}
   seed: 1337
   train_ipc: 500

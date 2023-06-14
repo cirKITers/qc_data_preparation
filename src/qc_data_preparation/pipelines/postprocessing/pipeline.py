@@ -5,26 +5,12 @@ from .nodes import (
     encode_data,
     generate_ssim_curve,
     generate_loss_curve,
-    train_model,
 )
 
 
 def create_pipeline(**kwargs) -> Pipeline:
     return pipeline(
         [
-            node(
-                train_model,
-                inputs=[
-                    "shuffled_normalized_train_x",
-                    "sorted_normalized_test_x",
-                    "params:number_of_features",
-                    "params:training.epochs",
-                    "params:seed",
-                    "params:fw_select",
-                ],
-                outputs=["autoencoder_model", "autoencoder_history"],
-                name="train_model",
-            ),
             node(
                 encode_data,
                 inputs=[
@@ -61,6 +47,8 @@ def create_pipeline(**kwargs) -> Pipeline:
             )
         ],
         inputs={
+            "autoencoder_model": "autoencoder_model",
+            "autoencoder_history": "autoencoder_history",
             "shuffled_normalized_train_x": "shuffled_normalized_train_x",
             "sorted_normalized_test_x": "sorted_normalized_test_x",
             "shuffled_train_y": "shuffled_train_y",
@@ -70,5 +58,5 @@ def create_pipeline(**kwargs) -> Pipeline:
             "encoded_test_data": "encoded_test_data",
             "encoded_train_data": "encoded_train_data",
         },
-        namespace="data_science",
+        namespace="postprocessing",
     )

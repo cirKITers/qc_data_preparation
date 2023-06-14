@@ -21,9 +21,9 @@ data_processing.shuffled_train_y:
   type: kedro.extras.datasets.pickle.PickleDataSet
   filepath: data/02_intermediate/shuffled_train_y.pkl
   backend: dill
-# data_preprocessing.autoencoder_model:
-#   type: kedro.extras.datasets.tensorflow.TensorFlowModelDataset
-#   filepath: data/06_models/autoencoder_${formatted_classes}
+data_preprocessing.tf_autoencoder_model:
+  type: kedro.extras.datasets.tensorflow.TensorFlowModelDataset
+  filepath: data/06_models/autoencoder_${formatted_classes}
 data_science.autoencoder_history:
   type: kedro.extras.datasets.pickle.PickleDataSet
   filepath: data/08_reporting/history_${formatted_classes}.pkl
