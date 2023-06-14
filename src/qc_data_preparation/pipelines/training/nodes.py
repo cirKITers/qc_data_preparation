@@ -9,6 +9,20 @@ from .autoencoder import TF_Autoencoder
 from .autoencoder import PT_Autoencoder_Exp as PT_Autoencoder
 
 
+def add_channel_data(x_values: np.ndarray) -> np.ndarray:
+    """
+    Adding a (redundant) channel (dimension) to the data so that we can work on channels within the
+    convolutional AE network
+
+    Args:
+        x_values (np.ndarray): data of shape [BxWxH]
+
+    Returns:
+        np.ndarray: data of shape [Bx1xWxH]
+    """    
+    return x_values.reshape(x_values.shape[0], 1, x_values.shape[1], x_values.shape[2])
+
+
 def train_tf_model(
     train_x, test_x, number_of_features, epochs, seed
 ) -> Tuple[tf.keras.models.Model, Dict]:
@@ -47,6 +61,15 @@ def train_tf_model(
 def train_pt_model(
     train_x, test_x, number_of_features, epochs, seed
 ) -> Tuple[pt.nn.Module, Dict]:
+
+    ssim_sigma = 1.5
+    # note that for torch, we cannot explicitly define the size of the gaussian filter
+    # for tf however, there is no different option than using gaussian
+    ssim_filter_size = 11 
+    ssim_k1 = 0.01
+    ssim_k2 = 0.03
+
+    batch_size=32
 
     pt.manual_seed(seed)
     autoencoder = PT_Autoencoder(number_of_features)
