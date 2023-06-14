@@ -55,6 +55,8 @@ def create_pipeline(**kwargs) -> Pipeline:
             "sorted_test_y": "sorted_test_y",
         },
         outputs={
+            "loss_curve": "loss_curve",
+            "accuracy_curve": "accuracy_curve",
             "encoded_test_data": "encoded_test_data",
             "encoded_train_data": "encoded_train_data",
         },
