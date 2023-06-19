@@ -28,12 +28,22 @@ autoencoder_history:
   type: kedro.extras.datasets.pickle.PickleDataSet
   filepath: data/08_reporting/history_${formatted_classes}.pkl
   backend: dill
-loss_curve:
-  type: qc_data_preparation.helpers.dataset.ExtendedPlotlyDataSet
+loss_curve_json:
+  type: kedro.extras.datasets.plotly.JSONDataSet
   filepath: data/08_reporting/loss_curve.json
-accuracy_curve:
-  type: qc_data_preparation.helpers.dataset.ExtendedPlotlyDataSet
+  fs_args:
+    save_args_save: r
+accuracy_curve_json:
+  type: kedro.extras.datasets.plotly.JSONDataSet
   filepath: data/08_reporting/accuracy_curve.json
+  fs_args:
+    save_args_save: r
+loss_curve_html:
+  type: qc_data_preparation.helpers.dataset.PlotlyDataSet
+  filepath: data/08_reporting/loss_curve.html
+accuracy_curve_html:
+  type: qc_data_preparation.helpers.dataset.PlotlyDataSet
+  filepath: data/08_reporting/accuracy_curve.html
 encoded_train_data:
   type: kedro.extras.datasets.pickle.PickleDataSet
   filepath: data/07_model_output/encoded_train_data_${formatted_classes}.pkl
