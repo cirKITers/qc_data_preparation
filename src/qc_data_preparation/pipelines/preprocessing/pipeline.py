@@ -75,52 +75,6 @@ def create_pipeline(**kwargs) -> Pipeline:
                 outputs="sorted_normalized_test_x",
                 name="normalize_test_data",
             ),
-            node(
-                train_model,
-                inputs=[
-                    "shuffled_normalized_train_x",
-                    "sorted_normalized_test_x",
-                    "params:number_of_features",
-                    "params:training.epochs",
-                    "params:seed",
-                ],
-                outputs=["autoencoder_model", "autoencoder_history"],
-                name="train_model",
-            ),
-            node(
-                encode_data,
-                inputs=[
-                    "autoencoder_model",
-                    "shuffled_normalized_train_x",
-                    "shuffled_train_y",
-                    "params:classes",
-                ],
-                outputs="encoded_train_data",
-                name="encode_train_data",
-            ),
-            node(
-                encode_data,
-                inputs=[
-                    "autoencoder_model",
-                    "sorted_normalized_test_x",
-                    "sorted_test_y",
-                    "params:classes",
-                ],
-                outputs="encoded_test_data",
-                name="encode_test_data",
-            ),
-            node(
-                generate_loss_curve,
-                inputs="autoencoder_history",
-                outputs="loss_curve",
-                name="generate_loss_curve",
-            ),
-            node(
-                generate_accuracy_curve,
-                inputs="autoencoder_history",
-                outputs="accuracy_curve",
-                name="generate_accuracy_curve",
-            ),
         ],
         inputs="mnist_data",
         outputs={
