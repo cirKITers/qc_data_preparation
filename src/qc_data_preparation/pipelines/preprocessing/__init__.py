@@ -1,5 +1,5 @@
 """
-This is a boilerplate pipeline 'mnist_processing'
+This is a boilerplate pipeline 'preprocessing'
 generated using Kedro 0.18.1
 """
 
