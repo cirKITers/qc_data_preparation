@@ -124,7 +124,7 @@ def create_pipeline(**kwargs) -> Pipeline:
                 inputs="autoencoder_history",
                 outputs="accuracy_curve",
                 name="generate_accuracy_curve",
-            )
+            ),
         ],
         inputs="mnist_data",
         outputs={
