@@ -11,8 +11,8 @@ from .autoencoder import PT_Autoencoder_Exp as PT_Autoencoder
 
 def add_channel_data(x_values: np.ndarray) -> np.ndarray:
     """
-    Adding a (redundant) channel (dimension) to the data so that we can work on channels within the
-    convolutional AE network
+    Adding a (redundant) channel (dimension) to the data so that we can work on channels
+    within the convolutional AE network
 
     Args:
         x_values (np.ndarray): data of shape [BxWxH]
@@ -40,7 +40,9 @@ def train_tf_model(
     # defining custom ssim to set the parameters accordingly
     # note that we are not using multiscale_ssim although tf should make use of batches
     # using multiscale_ssim however, results in error
-    @tf.keras.utils.register_keras_serializable()  # we need that for saving the model (load via {'ssim':ssim})
+
+    # we need that for saving the model (load via {'ssim':ssim})
+    @tf.keras.utils.register_keras_serializable()
     def ssim(pred, target):
         return tf.image.ssim(
             pred,
@@ -110,7 +112,8 @@ def train_pt_model(
     train_dataset = pt.utils.data.TensorDataset(train_x, train_x)
     test_dataset = pt.utils.data.TensorDataset(test_x, test_x)
 
-    # from those datasets, generate data loaders that take care of the shuffling and splitting in batches
+    # from those datasets, generate data loaders that take care of the
+    # shuffling and splitting in batches
     train_dataloader = pt.utils.data.DataLoader(
         train_dataset, shuffle=True, batch_size=batch_size
     )

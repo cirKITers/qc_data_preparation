@@ -24,7 +24,8 @@ def encode_data(
         features = model.encoder(values_x).numpy()
     else:
         raise RuntimeError(
-            f"Unknown model type: {type(model)}. Model must be one of [PT_Autoencoder, TF_Autoencoder]"
+            f"Unknown model type: {type(model)}. Model must be one of [PT_Autoencoder,"
+            " TF_Autoencoder]"
         )
 
     return {

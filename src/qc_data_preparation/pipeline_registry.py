@@ -24,7 +24,9 @@ def register_pipelines() -> Dict[str, Pipeline]:
         "tf_training": training_pipeline["tf_training_pipeline"],
         "pt_training": training_pipeline["pt_training_pipeline"],
         "postprocessing": postprocessing_pipeline,
-        "__default__": preprocessing_pipeline
-        + training_pipeline["pt_training_pipeline"]
-        + postprocessing_pipeline,
+        "__default__": (
+            preprocessing_pipeline
+            + training_pipeline["pt_training_pipeline"]
+            + postprocessing_pipeline
+        ),
     }

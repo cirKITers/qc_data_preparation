@@ -71,8 +71,8 @@ def normalize_data(x_values: np.ndarray) -> np.ndarray:
 
 def add_channel_data(x_values: np.ndarray) -> np.ndarray:
     """
-    Adding a (redundant) channel (dimension) to the data so that we can work on channels within the
-    convolutional AE network
+    Adding a (redundant) channel (dimension) to the data so that we can work on
+    channels within the convolutional AE network
 
     Args:
         x_values (np.ndarray): data of shape [BxWxH]
