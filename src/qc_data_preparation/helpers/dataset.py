@@ -11,11 +11,13 @@ from keras.utils.data_utils import get_file
 import plotly.graph_objects as go
 
 
-class ExtendedPlotlyDataSet(JSONDataSet):
+class PlotlyDataSet(JSONDataSet):
     def _save(self, data: go.Figure) -> None:
         """
-        Saves the provided pandas dataframe into both, a plotly json file (for further processing) and a html file (for easy access via browser).
-        This method should be adapted if anything changes in the implementation of the parent's class method.
+        Saves the provided pandas dataframe into both, a plotly json file
+        (for further processing) and a html file (for easy access via browser).
+        This method should be adapted if anything changes in the implementation
+        of the parent's class method.
 
         Args:
             data (pd.DataFrame): _description_
@@ -46,7 +48,9 @@ class TensorFlowDataset(AbstractDataSet):
             get_file(
                 self._filepath,
                 origin=origin_folder + "mnist.npz",
-                file_hash="731c5ac602752760c8e48fbffcf8c3b850d9dc2a2aedcf2cc48468fc17b673d1",  # noqa
+                file_hash=(  # noqa
+                    "731c5ac602752760c8e48fbffcf8c3b850d9dc2a2aedcf2cc48468fc17b673d1"
+                ),
             )
         return tf.keras.datasets.mnist.load_data(self._filepath)
 
