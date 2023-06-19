@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List
 
 import numpy as np
 import tensorflow as tf
@@ -9,21 +9,23 @@ from ..training.autoencoder import TF_Autoencoder
 from ..training.autoencoder import PT_Autoencoder_Exp as PT_Autoencoder
 from ..training.nodes import add_channel_data
 
+
 def encode_data(
     model: "tf.keras.models.Model | pt.nn.Module",
     values_x: np.ndarray,
     values_y: np.ndarray,
     classes: List,
 ) -> Dict[str, Any]:
-
     # check based on the type if we are using TF or PT framework
     if type(model) == PT_Autoencoder:
-        with pt.no_grad(): # have to use no_grad as the tensor requires grad otherwise
+        with pt.no_grad():  # have to use no_grad as the tensor requires grad otherwise
             features = model.encoder(pt.Tensor(add_channel_data(values_x))).numpy()
     elif type(model) == TF_Autoencoder:
         features = model.encoder(values_x).numpy()
     else:
-        raise RuntimeError(f"Unknown model type: {type(model)}. Model must be one of [PT_Autoencoder, TF_Autoencoder]")
+        raise RuntimeError(
+            f"Unknown model type: {type(model)}. Model must be one of [PT_Autoencoder, TF_Autoencoder]"
+        )
 
     return {
         "labels": values_y,
@@ -40,23 +42,15 @@ def generate_loss_curve(history: Dict):
     plt = go.Figure(
         [
             go.Scatter(
-                x=list(epochs),
-                y=loss_train,
-                mode='lines+markers',
-                name="Training Loss"
+                x=list(epochs), y=loss_train, mode="lines+markers", name="Training Loss"
             ),
             go.Scatter(
-                x=list(epochs),
-                y=loss_val,
-                mode='lines+markers',
-                name="Validation Loss"
-            )
+                x=list(epochs), y=loss_val, mode="lines+markers", name="Validation Loss"
+            ),
         ]
     )
     plt.update_layout(
-        title="Training and Validation Loss",
-        xaxis_title="Epochs",
-        yaxis_title="Loss"
+        title="Training and Validation Loss", xaxis_title="Epochs", yaxis_title="Loss"
     )
 
     return plt
@@ -70,23 +64,15 @@ def generate_ssim_curve(history: Dict):
     plt = go.Figure(
         [
             go.Scatter(
-                x=list(epochs),
-                y=ssim_train,
-                mode='lines+markers',
-                name="Training SSIM"
+                x=list(epochs), y=ssim_train, mode="lines+markers", name="Training SSIM"
             ),
             go.Scatter(
-                x=list(epochs),
-                y=ssim_val,
-                mode='lines+markers',
-                name="Validation SSIM"
-            )
+                x=list(epochs), y=ssim_val, mode="lines+markers", name="Validation SSIM"
+            ),
         ]
     )
     plt.update_layout(
-        title="Training and Validation SSIM",
-        xaxis_title="Epochs",
-        yaxis_title="SSIM"
+        title="Training and Validation SSIM", xaxis_title="Epochs", yaxis_title="SSIM"
     )
 
     return plt

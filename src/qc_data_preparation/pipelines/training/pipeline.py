@@ -1,10 +1,7 @@
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
 
-from .nodes import (
-    train_tf_model,
-    train_pt_model
-)
+from .nodes import train_tf_model, train_pt_model
 
 
 def create_pipeline(**kwargs) -> Pipeline:
@@ -71,6 +68,6 @@ def create_pipeline(**kwargs) -> Pipeline:
     )
 
     return {
-        "tf_training_pipeline":tf_training_pipeline,
-        "pt_training_pipeline":pt_training_pipeline,
+        "tf_training_pipeline": tf_training_pipeline,
+        "pt_training_pipeline": pt_training_pipeline,
     }

@@ -5,11 +5,12 @@ from typing import Any, Dict, Tuple
 import numpy as np
 import tensorflow as tf
 from kedro.io import AbstractDataSet
-from kedro.extras.datasets.plotly import PlotlyDataSet, JSONDataSet
+from kedro.extras.datasets.plotly import JSONDataSet
 from keras.utils.data_utils import get_file
 
-import pandas as pd
 import plotly.graph_objects as go
+
+
 class ExtendedPlotlyDataSet(JSONDataSet):
     def _save(self, data: go.Figure) -> None:
         """
@@ -21,16 +22,21 @@ class ExtendedPlotlyDataSet(JSONDataSet):
 
         Returns:
             _type_: _description_
-        """        
-        data.write_html(self._filepath.with_suffix('.html').as_posix(), full_html=True)
-        
+        """
+        data.write_html(self._filepath.with_suffix(".html").as_posix(), full_html=True)
+
         return super()._save(data)
+
 
 class TensorFlowDataset(AbstractDataSet):
     def __init__(self, filepath):
         self._filepath = PurePosixPath(filepath)
 
-    def _load(self) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]: #train_x, train_y, text_x, text_y
+    def _load(
+        self,
+    ) -> Tuple[
+        np.ndarray, np.ndarray, np.ndarray, np.ndarray
+    ]:  # train_x, train_y, text_x, text_y
         if not self._exists():
             logger = logging.getLogger(__name__)
             logger.info(f"Downloading dataset {self._filepath} from TensorFlow")
@@ -51,6 +57,4 @@ class TensorFlowDataset(AbstractDataSet):
         return Path(self._filepath.as_posix()).exists()
 
     def _describe(self) -> Dict[str, Any]:
-        return dict(
-            filepath=self._filepath
-        )
+        return dict(filepath=self._filepath)

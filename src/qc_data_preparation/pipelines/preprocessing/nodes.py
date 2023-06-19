@@ -57,6 +57,7 @@ def split_data(
 def normalize_data(x_values: np.ndarray) -> np.ndarray:
     return np.divide(x_values, 255)
 
+
 def add_channel_data(x_values: np.ndarray) -> np.ndarray:
     """
     Adding a (redundant) channel (dimension) to the data so that we can work on channels within the
@@ -67,8 +68,9 @@ def add_channel_data(x_values: np.ndarray) -> np.ndarray:
 
     Returns:
         np.ndarray: data of shape [Bx1xWxH]
-    """    
+    """
     return x_values.reshape(x_values.shape[0], 1, x_values.shape[1], x_values.shape[2])
+
 
 def sort_interleaved(x_values, y_values, classes) -> Dict[str, np.ndarray]:
     sort_order = []
@@ -77,4 +79,3 @@ def sort_interleaved(x_values, y_values, classes) -> Dict[str, np.ndarray]:
         for j in range(len(classes)):
             sort_order.append(j * amount + i)
     return {"sorted_x": x_values[sort_order], "sorted_y": y_values[sort_order]}
-
