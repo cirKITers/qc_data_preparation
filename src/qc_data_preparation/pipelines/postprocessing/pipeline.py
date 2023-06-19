@@ -45,6 +45,18 @@ def create_pipeline(**kwargs) -> Pipeline:
                 outputs="accuracy_curve",
                 name="generate_accuracy_curve",
             ),
+            node(
+                func=lambda x: [x, x],
+                inputs="loss_curve",
+                outputs="loss_curves",
+                name="copy_loss",
+            ),
+            node(
+                func=lambda x: [x, x],
+                inputs="accuracy_curve",
+                outputs="accuracy_curves",
+                name="copy_accuracy",
+            ),
         ],
         inputs={
             "autoencoder_model": "autoencoder_model",
@@ -55,8 +67,8 @@ def create_pipeline(**kwargs) -> Pipeline:
             "sorted_test_y": "sorted_test_y",
         },
         outputs={
-            "loss_curve": "loss_curve",
-            "accuracy_curve": "accuracy_curve",
+            "loss_curves": ["loss_curve_json", "loss_curve_html"],
+            "accuracy_curves": ["accuracy_curve_json", "accuracy_curve_html"],
             "encoded_test_data": "encoded_test_data",
             "encoded_train_data": "encoded_train_data",
         },
