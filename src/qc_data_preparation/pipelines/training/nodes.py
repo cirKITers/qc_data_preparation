@@ -54,7 +54,9 @@ def train_tf_model(
 
     autoencoder = TF_Autoencoder(number_of_features)
     autoencoder.compile(
-        optimizer="adam", loss=tf.keras.losses.MeanSquaredError(), metrics=[ssim]
+        optimizer="adam",
+        loss=tf.keras.losses.MeanSquaredError(),
+        metrics=[ssim],
     )
     history = autoencoder.fit(
         train_x,

@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Tuple
+from typing import Dict, List, Tuple
 
 import numpy as np
 
@@ -16,7 +16,10 @@ def subset_data(
     x_values: np.ndarray, y_values: np.ndarray, classes: List
 ) -> Dict[str, np.ndarray]:
     class_mask = np.isin(y_values, classes)
-    return {"selected_x": x_values[class_mask], "selected_y": y_values[class_mask]}
+    return {
+        "selected_x": x_values[class_mask],
+        "selected_y": y_values[class_mask],
+    }
 
 
 def shuffle_data(
@@ -25,7 +28,10 @@ def shuffle_data(
     assert len(x_values) == len(y_values), "Lenghts must be equal"
     rng = np.random.default_rng(seed=seed)
     permutation = rng.permutation(len(x_values))
-    return {"shuffled_x": x_values[permutation], "shuffled_y": y_values[permutation]}
+    return {
+        "shuffled_x": x_values[permutation],
+        "shuffled_y": y_values[permutation],
+    }
 
 
 def split_data(
@@ -51,7 +57,12 @@ def split_data(
             train_y = cls_y_values[:train_ipc]
             test_x = cls_x_values[-test_ipc:]
             test_y = cls_y_values[-test_ipc:]
-    return {"train_x": train_x, "train_y": train_y, "test_x": test_x, "test_y": test_y}
+    return {
+        "train_x": train_x,
+        "train_y": train_y,
+        "test_x": test_x,
+        "test_y": test_y,
+    }
 
 
 def normalize_data(x_values: np.ndarray) -> np.ndarray:

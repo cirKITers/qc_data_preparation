@@ -23,13 +23,19 @@ def create_pipeline(**kwargs) -> Pipeline:
             node(
                 subset_data,
                 inputs=["all_x", "all_y", "params:classes"],
-                outputs={"selected_x": "selected_x", "selected_y": "selected_y"},
+                outputs={
+                    "selected_x": "selected_x",
+                    "selected_y": "selected_y",
+                },
                 name="subset_data",
             ),
             node(
                 shuffle_data,
                 inputs=["selected_x", "selected_y", "params:seed"],
-                outputs={"shuffled_x": "shuffled_x", "shuffled_y": "shuffled_y"},
+                outputs={
+                    "shuffled_x": "shuffled_x",
+                    "shuffled_y": "shuffled_y",
+                },
                 name="shuffle_data",
             ),
             node(
@@ -66,7 +72,10 @@ def create_pipeline(**kwargs) -> Pipeline:
             node(
                 sort_interleaved,
                 inputs=["test_x", "test_y", "params:classes"],
-                outputs={"sorted_x": "sorted_test_x", "sorted_y": "sorted_test_y"},
+                outputs={
+                    "sorted_x": "sorted_test_x",
+                    "sorted_y": "sorted_test_y",
+                },
                 name="sort_test_data",
             ),
             node(

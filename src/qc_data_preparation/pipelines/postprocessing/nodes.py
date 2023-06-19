@@ -42,15 +42,23 @@ def generate_loss_curve(history: Dict):
     plt = go.Figure(
         [
             go.Scatter(
-                x=list(epochs), y=loss_train, mode="lines+markers", name="Training Loss"
+                x=list(epochs),
+                y=loss_train,
+                mode="lines+markers",
+                name="Training Loss",
             ),
             go.Scatter(
-                x=list(epochs), y=loss_val, mode="lines+markers", name="Validation Loss"
+                x=list(epochs),
+                y=loss_val,
+                mode="lines+markers",
+                name="Validation Loss",
             ),
         ]
     )
     plt.update_layout(
-        title="Training and Validation Loss", xaxis_title="Epochs", yaxis_title="Loss"
+        title="Training and Validation Loss",
+        xaxis_title="Epochs",
+        yaxis_title="Loss",
     )
 
     return plt
@@ -64,15 +72,23 @@ def generate_ssim_curve(history: Dict):
     plt = go.Figure(
         [
             go.Scatter(
-                x=list(epochs), y=ssim_train, mode="lines+markers", name="Training SSIM"
+                x=list(epochs),
+                y=ssim_train,
+                mode="lines+markers",
+                name="Training SSIM",
             ),
             go.Scatter(
-                x=list(epochs), y=ssim_val, mode="lines+markers", name="Validation SSIM"
+                x=list(epochs),
+                y=ssim_val,
+                mode="lines+markers",
+                name="Validation SSIM",
             ),
         ]
     )
     plt.update_layout(
-        title="Training and Validation SSIM", xaxis_title="Epochs", yaxis_title="SSIM"
+        title="Training and Validation SSIM",
+        xaxis_title="Epochs",
+        yaxis_title="SSIM",
     )
 
     return plt

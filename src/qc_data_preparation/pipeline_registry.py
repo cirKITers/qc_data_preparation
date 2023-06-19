@@ -3,7 +3,11 @@ from typing import Dict
 
 from kedro.pipeline import Pipeline
 
-from qc_data_preparation.pipelines import preprocessing, training, postprocessing
+from qc_data_preparation.pipelines import (
+    preprocessing,
+    training,
+    postprocessing,
+)
 
 
 def register_pipelines() -> Dict[str, Pipeline]:
