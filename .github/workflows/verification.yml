@@ -17,6 +17,7 @@ jobs:
         python-version: '3.9'
     - name: Install dependencies
       run: |
+        pip install pip-tools
         python -m piptools compile -q src/requirements.in
         pip install -r src/requirements.txt
     - name: Lint with flake8
