@@ -5,8 +5,26 @@ from typing import Any, Dict, Tuple
 import numpy as np
 import tensorflow as tf
 from kedro.io import AbstractDataSet
+from kedro.extras.datasets.plotly import PlotlyDataSet, JSONDataSet
 from keras.utils.data_utils import get_file
 
+import pandas as pd
+import plotly.graph_objects as go
+class ExtendedPlotlyDataSet(JSONDataSet):
+    def _save(self, data: go.Figure) -> None:
+        """
+        Saves the provided pandas dataframe into both, a plotly json file (for further processing) and a html file (for easy access via browser).
+        This method should be adapted if anything changes in the implementation of the parent's class method.
+
+        Args:
+            data (pd.DataFrame): _description_
+
+        Returns:
+            _type_: _description_
+        """        
+        data.write_html(self._filepath.with_suffix('.html').as_posix(), full_html=True)
+        
+        return super()._save(data)
 
 class TensorFlowDataset(AbstractDataSet):
     def __init__(self, filepath):

@@ -29,10 +29,10 @@ autoencoder_history:
   filepath: data/08_reporting/history_${formatted_classes}.pkl
   backend: dill
 loss_curve:
-  type: kedro.extras.datasets.plotly.JSONDataSet
+  type: qc_data_preparation.helpers.dataset.ExtendedPlotlyDataSet
   filepath: data/08_reporting/loss_curve.json
 accuracy_curve:
-  type: kedro.extras.datasets.plotly.JSONDataSet
+  type: qc_data_preparation.helpers.dataset.ExtendedPlotlyDataSet
   filepath: data/08_reporting/accuracy_curve.json
 encoded_train_data:
   type: kedro.extras.datasets.pickle.PickleDataSet
