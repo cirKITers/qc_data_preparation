@@ -1,0 +1,28 @@
+name: Static Checks
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 10 * * 3,6'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.9'
+    - name: Install dependencies
+      run: |
+        pip install pip-tools
+        python -m piptools compile -q src/requirements.in
+        pip install -r src/requirements.txt
+    - name: Lint with flake8
+      run: |
+        flake8 src
+    - name: Format with black
+      run: |
+        black src --diff --check
