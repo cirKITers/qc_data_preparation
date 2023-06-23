@@ -54,6 +54,4 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.black]
-line-length = 88
-include = '\.pyi?$'
 preview = true
