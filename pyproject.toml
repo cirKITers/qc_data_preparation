@@ -25,7 +25,11 @@ exclude_lines = ["pragma: no cover", "raise NotImplementedError"]
 name = "qc-data-preparation"
 version = "0.18.1"
 description = ""
-authors = ["lc3267 <melvin.strobl@kit.edu>"]
+authors = [
+    {name="Eileen Kuehn", email="eileen.kuehn@kit.edu"},
+    {name="Melvin Strobl", email="melvin.strobl@kit.edu"},
+    {name="Christof Wendenius", email="christof.wendenius@kit.edu"},
+]
 readme = "README.md"
 
 [tool.poetry.dependencies]
