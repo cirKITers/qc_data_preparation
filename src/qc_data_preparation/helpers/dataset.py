@@ -18,12 +18,6 @@ class PlotlyDataSet(JSONDataSet):
         (for further processing) and a html file (for easy access via browser).
         This method should be adapted if anything changes in the implementation
         of the parent's class method.
-
-        Args:
-            data (pd.DataFrame): _description_
-
-        Returns:
-            _type_: _description_
         """
         data.write_html(self._filepath.with_suffix(".html").as_posix(), full_html=True)
 
