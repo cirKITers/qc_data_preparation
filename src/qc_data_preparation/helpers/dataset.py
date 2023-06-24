@@ -1,3 +1,4 @@
+import sys
 import logging
 from pathlib import Path, PurePosixPath
 from typing import Any, Dict, Tuple
@@ -6,6 +7,36 @@ import numpy as np
 import tensorflow as tf
 from kedro.io import AbstractDataSet
 from keras.utils.data_utils import get_file
+
+
+if sys.platform == "darwin":
+    import tempfile
+    from pathlib import PurePath
+    from kedro.io.core import get_filepath_str
+    from kedro_datasets.tensorflow import TensorFlowModelDataSet
+    from kedro_datasets.tensorflow.tensorflow_model_dataset import TEMPORARY_H5_FILE
+
+    def load_folder(self) -> tf.keras.Model:
+        load_path = get_filepath_str(self._get_load_path(), self._protocol)
+        print(f"load_path is {load_path}")
+
+        with tempfile.TemporaryDirectory(prefix=self._tmp_prefix) as path:
+            if self._is_h5:
+                path = str(PurePath(path) / TEMPORARY_H5_FILE)
+                self._fs.copy(load_path, path)
+            else:
+                self._fs.get(load_path + "/", path, recursive=True)
+
+            # Pass the local temporary directory/file path to keras.load_model
+            device_name = self._load_args.pop("tf_device", None)
+            if device_name:
+                with tf.device(device_name):
+                    model = tf.keras.models.load_model(path, **self._load_args)
+            else:
+                model = tf.keras.models.load_model(path, **self._load_args)
+            return model
+
+    TensorFlowModelDataSet._load = load_folder
 
 
 class TensorFlowDataset(AbstractDataSet):
