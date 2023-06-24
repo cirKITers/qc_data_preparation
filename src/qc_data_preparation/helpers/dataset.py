@@ -3,9 +3,15 @@ from pathlib import Path, PurePosixPath
 from typing import Any, Dict, Tuple
 
 import numpy as np
+from qc_data_preparation.pipelines.training.autoencoder import (
+    PT_Autoencoder,
+    TF_Autoencoder,
+)
 import tensorflow as tf
+import torch
 from kedro.io import AbstractDataSet
 from kedro.extras.datasets.plotly import JSONDataSet
+from kedro.extras.datasets.tensorflow import TensorFlowModelDataset
 from keras.utils.data_utils import get_file
 
 import plotly.graph_objects as go
@@ -56,3 +62,73 @@ class TensorFlowDataset(AbstractDataSet):
 
     def _describe(self) -> Dict[str, Any]:
         return dict(filepath=self._filepath)
+
+
+class PTModelDataset(AbstractDataSet):
+    def __init__(
+        self,
+        filepath: str,
+        load_args: Dict[str, Any] = None,
+        save_args: Dict[str, Any] = None,
+    ) -> None:
+        self._filepath = PurePosixPath(filepath)
+        self._load_args = load_args
+        self._save_args = save_args
+
+    def _load(self) -> torch.nn.Module:
+        state_dict = torch.load(self._filepath)
+        model = PT_Autoencoder(**self._load_args)
+        model.load_state_dict(state_dict)
+        return model
+
+    def _save(self, model: torch.nn.Module) -> None:
+        torch.save(model.state_dict(), self._filepath, **self._save_args)
+
+    def _exists(self) -> bool:
+        return Path(self._filepath.as_posix()).exists()
+
+    def _describe(self) -> Dict[str, Any]:
+        return dict(
+            filepath=self._filepath,
+            model=PT_Autoencoder,
+            load_args=self._load_args,
+            save_args=self._save_args,
+        )
+
+
+class TFPTModelDataset(AbstractDataSet):
+    def __init__(
+        self,
+        filepath: str,
+        model: "torch.nn.Module | tf.keras.Model",
+        load_args: Dict[str, Any] = None,
+        save_args: Dict[str, Any] = None,
+    ) -> None:
+        logger = logging.getLogger(__name__)
+        if issubclass(type(model), torch.nn.Module) or model == "PT_Autoencoder":
+            # provide PTModelDataset
+            logger.info(f"Handling model {model} as pytorch model")
+            self._model_io = PTModelDataset(
+                filepath=filepath, load_args=load_args, save_args=save_args
+            )
+        elif issubclass(type(model), tf.keras.Model) or model == "TF_Autoencoder":
+            # provide TFModelDataset
+            logger.info(f"Handling model {model} as tensorflow model")
+            self._model_io = TensorFlowModelDataset(
+                filepath=filepath, load_args=load_args, save_args=save_args
+            )
+        else:
+            logger.error(f"Type of model {model} is not provided")
+            raise NotImplementedError
+
+    def _load(self) -> "torch.nn.Module | tf.keras.Model":
+        return self._model_io._load()
+
+    def _save(self, model: "torch.nn.Module | tf.keras.Model") -> None:
+        self._model_io._save(model)
+
+    def _exists(self) -> bool:
+        return self._model_io._exists()
+
+    def _describe(self):
+        return self._model_io._describe()
