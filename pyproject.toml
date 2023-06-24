@@ -26,9 +26,9 @@ name = "qc-data-preparation"
 version = "0.18.1"
 description = ""
 authors = [
-    {name="Eileen Kuehn", email="eileen.kuehn@kit.edu"},
-    {name="Melvin Strobl", email="melvin.strobl@kit.edu"},
-    {name="Christof Wendenius", email="christof.wendenius@kit.edu"},
+    "Eileen Kuehn <eileen.kuehn@kit.edu>",
+    "Melvin Strobl <melvin.strobl@kit.edu>",
+    "Christof Wendenius <christof.wendenius@kit.edu>",
 ]
 readme = "README.md"
 
