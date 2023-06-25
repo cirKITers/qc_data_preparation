@@ -1,11 +1,8 @@
 version: 1
 disable_existing_loggers: False
 formatters:
-    simple:
-        format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    json_formatter:
-        format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-        class: pythonjsonlogger.jsonlogger.JsonFormatter
+  simple:
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
 handlers:
     console:
@@ -24,32 +21,19 @@ handlers:
         encoding: utf8
         delay: True
 
-    error_file_handler:
-        class: logging.handlers.RotatingFileHandler
-        level: ERROR
-        formatter: simple
-        filename: logs/errors.log
-        maxBytes: 10485760 # 10MB
-        backupCount: 20
-        encoding: utf8
-        delay: True
+    rich:
+        class: kedro.logging.RichHandler
+        rich_tracebacks: True
+        # Advance options for customisation.
+        # See https://docs.kedro.org/en/stable/logging/logging.html#project-side-logging-configuration
+        # tracebacks_show_locals: False
 
 loggers:
-    anyconfig:
-        level: WARNING
-        handlers: [console, info_file_handler, error_file_handler]
-        propagate: no
-
-    kedro.io:
+    kedro:
         level: INFO
-        handlers: [console, info_file_handler, error_file_handler]
-        propagate: no
 
-    kedro.pipeline:
+    qc_data_preparation:
         level: INFO
-        handlers: [console, info_file_handler, error_file_handler]
-        propagate: no
 
 root:
-    level: INFO
-    handlers: [console, info_file_handler, error_file_handler]
+  handlers: [rich, info_file_handler]
