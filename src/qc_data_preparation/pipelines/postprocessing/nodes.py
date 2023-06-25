@@ -20,7 +20,7 @@ def encode_data(
     if type(model) == PT_Autoencoder:
         with pt.no_grad():  # have to use no_grad as the tensor requires grad otherwise
             features = model.encoder(pt.Tensor(add_channel_data(values_x))).numpy()
-    elif type(model) == TF_Autoencoder:
+    elif type(model).__name__ == "TF_Autoencoder":
         features = model.encoder(values_x).numpy()
     else:
         raise TypeError(

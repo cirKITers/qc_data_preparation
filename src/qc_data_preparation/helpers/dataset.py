@@ -1,4 +1,6 @@
+import os
 import sys
+import fsspec
 import logging
 from pathlib import Path, PurePosixPath
 from typing import Any, Dict, Tuple
@@ -8,15 +10,12 @@ import tensorflow as tf
 from tensorflow.keras.utils import get_file
 import torch
 from kedro.io import AbstractDataSet
-from kedro_datasets.tensorflow import TensorFlowModelDataset
+from kedro.io.core import get_protocol_and_path
+from kedro_datasets.tensorflow import TensorFlowModelDataSet
 from kedro_datasets.plotly import JSONDataSet
-
 import plotly.graph_objects as go
 
-from qc_data_preparation.pipelines.training.autoencoder import (
-    PT_Autoencoder,
-    TF_Autoencoder,
-)
+from ..pipelines.training.autoencoder import PT_Autoencoder_Exp as PT_Autoencoder
 
 
 class PlotlyDataSet(JSONDataSet):
@@ -39,7 +38,6 @@ if sys.platform == "darwin":
     import tempfile
     from pathlib import PurePath
     from kedro.io.core import get_filepath_str
-    from kedro_datasets.tensorflow import TensorFlowModelDataSet
     from kedro_datasets.tensorflow.tensorflow_model_dataset import TEMPORARY_H5_FILE
 
     def load_folder(self) -> tf.keras.Model:
@@ -106,9 +104,17 @@ class PTModelDataset(AbstractDataSet):
         load_args: Dict[str, Any] = None,
         save_args: Dict[str, Any] = None,
     ) -> None:
-        self._filepath = PurePosixPath(filepath)
+        self._tmp_prefix = "kedro_pytorch_tmp"  # temp prefix pattern
+        self._filepath = filepath
         self._load_args = load_args
         self._save_args = save_args
+        _fs_args = {}
+        protocol, path = get_protocol_and_path(filepath)
+        if protocol == "file":
+            _fs_args.setdefault("auto_mkdir", True)
+
+        self._protocol = protocol
+        self._fs = fsspec.filesystem(self._protocol)
 
     def _load(self) -> torch.nn.Module:
         state_dict = torch.load(self._filepath)
@@ -117,7 +123,13 @@ class PTModelDataset(AbstractDataSet):
         return model
 
     def _save(self, model: torch.nn.Module) -> None:
-        torch.save(model.state_dict(), self._filepath, **self._save_args)
+        save_path = self._filepath
+        with tempfile.TemporaryDirectory(prefix=self._tmp_prefix) as path:
+            file_path = path + "/" + os.path.basename(save_path)
+            torch.save(model.state_dict(), file_path, **self._save_args)
+            if self._fs.exists(save_path):
+                self._fs.rm(save_path, recursive=True)
+            self._fs.put(file_path, save_path, recursive=False)
 
     def _exists(self) -> bool:
         return Path(self._filepath.as_posix()).exists()
@@ -135,35 +147,84 @@ class TFPTModelDataset(AbstractDataSet):
     def __init__(
         self,
         filepath: str,
-        model: "torch.nn.Module | tf.keras.Model",
         load_args: Dict[str, Any] = None,
         save_args: Dict[str, Any] = None,
     ) -> None:
+        self._save_args = {} if not save_args else save_args
+        self._load_args = {} if not load_args else load_args
+        self._filepath = filepath
+        self._model_io = None
+
+    def _load(self) -> "torch.nn.Module | tf.keras.Model":
+        """
+        This method tries to load one of the supported models,
+        :py:class::~.PT_Autoencoder, or :py:class::~.TF_Autoencoder.
+        """
+        if self._model_io:
+            return self._model_io._load()
+        else:  # checks are potentially dangerous since no specific error is raised
+            try:
+                self._init_tf_io()
+                return self._model_io._load()
+            except IsADirectoryError:
+                pass
+            try:
+                self._init_pt_io()
+                return self._model_io._load()
+            except IsADirectoryError:
+                pass
+            raise TypeError(f"Type of model in {self._filepath} is not supported")
+
+    def _init_pt_io(self):
+        self._model_io = PTModelDataset(
+            filepath=self._filepath,
+            load_args=self._load_args,
+            save_args=self._save_args,
+        )
+
+    def _init_tf_io(self):
+        @tf.keras.utils.register_keras_serializable()
+        def ssim(pred, target):
+            return tf.image.ssim(
+                pred,
+                target,
+                max_val=1.0,
+                filter_size=11,
+                filter_sigma=1.5,
+                k1=0.01,
+                k2=0.03,
+            )
+
+        load_args = self._load_args.copy()
+        del load_args["latent_dim"]
+        load_args["custom_objects"] = {"ssim": ssim}
+        self._model_io = TensorFlowModelDataSet(
+            filepath=self._filepath,
+            load_args=load_args,
+            save_args=self._save_args,
+        )
+
+    def _save(self, model: "torch.nn.Module | tf.keras.Model") -> None:
         logger = logging.getLogger(__name__)
         if issubclass(type(model), torch.nn.Module) or model == "PT_Autoencoder":
             # provide PTModelDataset
             logger.info(f"Handling model {model} as pytorch model")
-            self._model_io = PTModelDataset(
-                filepath=filepath, load_args=load_args, save_args=save_args
-            )
+            self._init_pt_io()
         elif issubclass(type(model), tf.keras.Model) or model == "TF_Autoencoder":
             # provide TFModelDataset
             logger.info(f"Handling model {model} as tensorflow model")
-            self._model_io = TensorFlowModelDataset(
-                filepath=filepath, load_args=load_args, save_args=save_args
-            )
+            self._init_tf_io()
         else:
-            logger.error(f"Type of model {model} is not provided")
-            raise NotImplementedError
-
-    def _load(self) -> "torch.nn.Module | tf.keras.Model":
-        return self._model_io._load()
-
-    def _save(self, model: "torch.nn.Module | tf.keras.Model") -> None:
+            raise TypeError(f"Type of model {model} is not provided")
         self._model_io._save(model)
 
     def _exists(self) -> bool:
         return self._model_io._exists()
 
-    def _describe(self):
-        return self._model_io._describe()
+    def _describe(self) -> Dict[str, Any]:
+        return dict(
+            filepath=self._filepath,
+            model=self._model_io,
+            load_args=self._load_args,
+            save_args=self._save_args,
+        )
