@@ -26,9 +26,16 @@ class PlotlyDataSet(JSONDataSet):
         This method should be adapted if anything changes in the implementation
         of the parent's class method.
         """
-        data.write_html(self._filepath.with_suffix(".html").as_posix(), full_html=True)
-
-        return super()._save(data)
+        filepath = self._filepath
+        save_path = get_filepath_str(filepath, self._protocol)
+        with self._fs.open(save_path, **self._fs_open_args_save) as fs_file:
+            fs_file.write(
+                data.to_html(
+                    include_plotlyjs=True,
+                    full_html=True,
+                )
+            )
+        self._invalidate_cache()
 
 
 # MacOS Patch for loading of directories
