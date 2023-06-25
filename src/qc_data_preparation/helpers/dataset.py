@@ -142,6 +142,11 @@ class PTModelDataset(AbstractDataSet):
 
 
 class TFPTModelDataset(AbstractDataSet):
+    """
+    Dataset that supports saving and loading of tensorflow and pytorch models
+    based on :py:class:`~.PT_Autoencoder` and :py:class:`~.TF_Autoencoder`.
+    """
+
     def __init__(
         self,
         filepath: str,
