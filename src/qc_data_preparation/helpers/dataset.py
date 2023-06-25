@@ -130,7 +130,7 @@ class PTModelDataset(AbstractDataSet):
             self._fs.put(tmp_path, save_path, recursive=False)
 
     def _exists(self) -> bool:
-        return Path(self._filepath.as_posix()).exists()
+        return self._fs.exists(self._filepath)
 
     def _describe(self) -> Dict[str, Any]:
         return dict(
