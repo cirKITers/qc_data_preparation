@@ -101,8 +101,8 @@ class PTModelDataset(AbstractDataSet):
     def __init__(
         self,
         filepath: str,
-        load_args: Dict[str, Any] = None,
-        save_args: Dict[str, Any] = None,
+        load_args: "Dict[str, Any] | None" = None,
+        save_args: "Dict[str, Any] | None" = None,
     ) -> None:
         self._tmp_prefix = "kedro_pytorch_tmp"  # temp prefix pattern
         self._filepath = filepath
