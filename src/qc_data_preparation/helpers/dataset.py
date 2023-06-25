@@ -160,7 +160,7 @@ class TFPTModelDataset(AbstractDataSet):
         This method tries to load one of the supported models,
         :py:class::`~.PT_Autoencoder`, or :py:class::`~.TF_Autoencoder`.
         """
-        if self._model_io:
+        if self._model_io is not None:
             return self._model_io._load()
         else:  # checks are potentially dangerous since no specific error is raised
             try:
