@@ -23,7 +23,7 @@ def encode_data(
     elif type(model) == TF_Autoencoder:
         features = model.encoder(values_x).numpy()
     else:
-        raise RuntimeError(
+        raise TypeError(
             f"Unknown model type: {type(model)}. Model must be one of [PT_Autoencoder,"
             " TF_Autoencoder]"
         )
