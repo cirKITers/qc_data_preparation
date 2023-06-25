@@ -211,11 +211,11 @@ class TFPTModelDataset(AbstractDataSet):
 
     def _save(self, model: "torch.nn.Module | tf.keras.Model") -> None:
         logger = logging.getLogger(__name__)
-        if issubclass(type(model), torch.nn.Module) or model == "PT_Autoencoder":
+        if issubclass(type(model), torch.nn.Module):
             # provide PTModelDataset
             logger.info(f"Handling model {model} as pytorch model")
             self._init_pt_io()
-        elif issubclass(type(model), tf.keras.Model) or model == "TF_Autoencoder":
+        elif issubclass(type(model), tf.keras.Model):
             # provide TFModelDataset
             logger.info(f"Handling model {model} as tensorflow model")
             self._init_tf_io()
