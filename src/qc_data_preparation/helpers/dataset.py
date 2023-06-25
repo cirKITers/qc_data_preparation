@@ -109,11 +109,9 @@ class PTModelDataset(AbstractDataSet):
         self._load_args = load_args
         self._save_args = save_args
         _fs_args = {}
-        protocol, path = get_protocol_and_path(filepath)
-        if protocol == "file":
+        self._protocol, _ = get_protocol_and_path(filepath)
+        if self._protocol == "file":
             _fs_args.setdefault("auto_mkdir", True)
-
-        self._protocol = protocol
         self._fs = fsspec.filesystem(self._protocol, **_fs_args)
 
     def _load(self) -> torch.nn.Module:
