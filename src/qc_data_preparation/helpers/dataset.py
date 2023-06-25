@@ -1,3 +1,4 @@
+import sys
 import logging
 from pathlib import Path, PurePosixPath
 from typing import Any, Dict, Tuple
@@ -28,6 +29,39 @@ class PlotlyDataSet(JSONDataSet):
         data.write_html(self._filepath.with_suffix(".html").as_posix(), full_html=True)
 
         return super()._save(data)
+
+
+# MacOS Patch for loading of directories
+# This is mostly a copy of TensorFlowModelDataSet._load but
+# explicitly treats the to-be-copied directory as such.
+if sys.platform == "darwin":
+    import tempfile
+    from pathlib import PurePath
+    from kedro.io.core import get_filepath_str
+    from kedro_datasets.tensorflow import TensorFlowModelDataSet
+    from kedro_datasets.tensorflow.tensorflow_model_dataset import TEMPORARY_H5_FILE
+
+    def load_folder(self) -> tf.keras.Model:
+        load_path = get_filepath_str(self._get_load_path(), self._protocol)
+
+        with tempfile.TemporaryDirectory(prefix=self._tmp_prefix) as path:
+            if self._is_h5:
+                path = str(PurePath(path) / TEMPORARY_H5_FILE)
+                self._fs.copy(load_path, path)
+            else:
+                # MacOS Patch: add / to force copying the folder content only
+                self._fs.get(load_path + "/", path, recursive=True)
+
+            # Pass the local temporary directory/file path to keras.load_model
+            device_name = self._load_args.pop("tf_device", None)
+            if device_name:
+                with tf.device(device_name):
+                    model = tf.keras.models.load_model(path, **self._load_args)
+            else:
+                model = tf.keras.models.load_model(path, **self._load_args)
+            return model
+
+    TensorFlowModelDataSet._load = load_folder
 
 
 class TensorFlowDataset(AbstractDataSet):

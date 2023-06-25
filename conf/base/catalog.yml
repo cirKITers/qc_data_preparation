@@ -46,10 +46,10 @@ accuracy_curve_html:
   type: qc_data_preparation.helpers.dataset.PlotlyDataSet
   filepath: data/08_reporting/accuracy_curve.html
 encoded_train_data:
-  type: kedro.extras.datasets.pickle.PickleDataSet
+  type: kedro_datasets.pickle.PickleDataSet
   filepath: data/07_model_output/encoded_train_data_${formatted_classes}.pkl
   backend: dill
 encoded_test_data:
-  type: kedro.extras.datasets.pickle.PickleDataSet
+  type: kedro_datasets.pickle.PickleDataSet
   filepath: data/07_model_output/encoded_test_data_${formatted_classes}.pkl
   backend: dill
