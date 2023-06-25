@@ -47,7 +47,7 @@ class PT_Autoencoder(pt.nn.Module):
     https://covalent.readthedocs.io/en/latest/tutorials/0_ClassicalMachineLearning/autoencoders/source.html
     """
 
-    def __init__(self, latent_space_dim):
+    def __init__(self, latent_dim):
         super(PT_Autoencoder, self).__init__()
         self.encoder = pt.nn.Sequential(
             pt.nn.Conv2d(
@@ -72,14 +72,14 @@ class PT_Autoencoder(pt.nn.Module):
             ),  # hidden size = 64x1x1 -> hidden size = latent_space_dim x1x1
             pt.nn.Tanh(),
             pt.nn.Linear(
-                16, latent_space_dim
+                16, latent_dim
             ),  # hidden size = 64x1x1 -> hidden size = latent_space_dim x1x1
             pt.nn.Tanh(),
         )
 
         self.decoder = pt.nn.Sequential(
             pt.nn.Linear(
-                latent_space_dim, 16
+                latent_dim, 16
             ),  # hidden size = latent_space_dim x1x1 -> hidden size = 64x1x1
             pt.nn.ReLU(True),
             pt.nn.Linear(
@@ -119,7 +119,7 @@ class PT_Autoencoder_Exp(pt.nn.Module):
     https://covalent.readthedocs.io/en/latest/tutorials/0_ClassicalMachineLearning/autoencoders/source.html
     """
 
-    def __init__(self, latent_space_dim):
+    def __init__(self, latent_dim):
         super(PT_Autoencoder_Exp, self).__init__()
         self.encoder = pt.nn.Sequential(
             pt.nn.Conv2d(
@@ -144,14 +144,14 @@ class PT_Autoencoder_Exp(pt.nn.Module):
             pt.nn.Linear(64, 16),  # hidden size = 64 -> hidden size = 16
             pt.nn.Tanh(),
             pt.nn.Linear(
-                16, latent_space_dim
+                16, latent_dim
             ),  # hidden size = 16 -> hidden size = latent_space_dim
             pt.nn.Tanh(),
         )
 
         self.decoder = pt.nn.Sequential(
             pt.nn.Linear(
-                latent_space_dim, 16
+                latent_dim, 16
             ),  # hidden size = latent_space_dim x1x1 -> hidden size = 64x1x1
             pt.nn.ReLU(True),
             pt.nn.Linear(
