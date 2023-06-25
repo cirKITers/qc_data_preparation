@@ -18,7 +18,6 @@ if sys.platform == "darwin":
 
     def load_folder(self) -> tf.keras.Model:
         load_path = get_filepath_str(self._get_load_path(), self._protocol)
-        print(f"load_path is {load_path}")
 
         with tempfile.TemporaryDirectory(prefix=self._tmp_prefix) as path:
             if self._is_h5:
