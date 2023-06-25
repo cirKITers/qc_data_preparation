@@ -122,12 +122,12 @@ class PTModelDataset(AbstractDataSet):
 
     def _save(self, model: torch.nn.Module) -> None:
         save_path = self._filepath
-        with tempfile.TemporaryDirectory(prefix=self._tmp_prefix) as path:
-            file_path = path + "/" + os.path.basename(save_path)
-            torch.save(model.state_dict(), file_path, **self._save_args)
+        with tempfile.TemporaryDirectory(prefix=self._tmp_prefix) as tmp_dir:
+            tmp_path = tmp_dir + "/" + os.path.basename(save_path)
+            torch.save(model.state_dict(), tmp_path, **self._save_args)
             if self._fs.exists(save_path):
                 self._fs.rm(save_path, recursive=True)
-            self._fs.put(file_path, save_path, recursive=False)
+            self._fs.put(tmp_path, save_path, recursive=False)
 
     def _exists(self) -> bool:
         return Path(self._filepath.as_posix()).exists()
