@@ -162,14 +162,9 @@ class TFPTModelDataset(AbstractDataSet):
         """
         if self._model_io is not None:
             return self._model_io._load()
-        else:  # checks are potentially dangerous since no specific error is raised
+        for model_init in (self._init_tf_io, self._init_pt_io):
             try:
-                self._init_tf_io()
-                return self._model_io._load()
-            except IsADirectoryError:
-                pass
-            try:
-                self._init_pt_io()
+                model_init()
                 return self._model_io._load()
             except IsADirectoryError:
                 pass
