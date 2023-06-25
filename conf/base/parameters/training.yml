@@ -1,5 +1,5 @@
 training:
-  number_of_features: 8
+  number_of_features: ${number_of_features}
   seed: 1337
   epochs: 800
   batch_size: 32 

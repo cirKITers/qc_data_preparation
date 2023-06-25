@@ -5,7 +5,6 @@ import tensorflow as tf
 import torch as pt
 import plotly.graph_objects as go
 
-from ..training.autoencoder import TF_Autoencoder
 from ..training.autoencoder import PT_Autoencoder_Exp as PT_Autoencoder
 from ..training.nodes import add_channel_data
 
@@ -20,10 +19,10 @@ def encode_data(
     if type(model) == PT_Autoencoder:
         with pt.no_grad():  # have to use no_grad as the tensor requires grad otherwise
             features = model.encoder(pt.Tensor(add_channel_data(values_x))).numpy()
-    elif type(model) == TF_Autoencoder:
+    elif type(model).__name__ == "TF_Autoencoder":
         features = model.encoder(values_x).numpy()
     else:
-        raise RuntimeError(
+        raise TypeError(
             f"Unknown model type: {type(model)}. Model must be one of [PT_Autoencoder,"
             " TF_Autoencoder]"
         )
