@@ -158,7 +158,7 @@ class TFPTModelDataset(AbstractDataSet):
     def _load(self) -> "torch.nn.Module | tf.keras.Model":
         """
         This method tries to load one of the supported models,
-        :py:class::~.PT_Autoencoder, or :py:class::~.TF_Autoencoder.
+        :py:class::`~.PT_Autoencoder`, or :py:class::`~.TF_Autoencoder`.
         """
         if self._model_io:
             return self._model_io._load()
@@ -183,6 +183,13 @@ class TFPTModelDataset(AbstractDataSet):
         )
 
     def _init_tf_io(self):
+        """
+        This method ensures that the ssim metric can be loaded by putting the
+        specific method into `custom_objects` for `load_args`. However, it
+        currently ignores the set parameters from data catalog. So it cannot
+        be perfectly restored at the moment.
+        """
+
         @tf.keras.utils.register_keras_serializable()
         def ssim(pred, target):
             return tf.image.ssim(
