@@ -114,7 +114,7 @@ class PTModelDataset(AbstractDataSet):
             _fs_args.setdefault("auto_mkdir", True)
 
         self._protocol = protocol
-        self._fs = fsspec.filesystem(self._protocol)
+        self._fs = fsspec.filesystem(self._protocol, **_fs_args)
 
     def _load(self) -> torch.nn.Module:
         state_dict = torch.load(self._filepath)
