@@ -9,6 +9,9 @@ from kedro.io import AbstractDataSet
 from keras.utils.data_utils import get_file
 
 
+# MacOS Patch for loading of directories
+# This is mostly a copy of TensorFlowModelDataSet._load but
+# explicitly treats the to-be-copied directory as such.
 if sys.platform == "darwin":
     import tempfile
     from pathlib import PurePath
