@@ -27,6 +27,7 @@ if sys.platform == "darwin":
                 path = str(PurePath(path) / TEMPORARY_H5_FILE)
                 self._fs.copy(load_path, path)
             else:
+                # MacOS Patch: add / to force copying the folder content only
                 self._fs.get(load_path + "/", path, recursive=True)
 
             # Pass the local temporary directory/file path to keras.load_model
