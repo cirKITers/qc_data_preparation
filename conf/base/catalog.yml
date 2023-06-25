@@ -24,7 +24,8 @@ shuffled_train_y:
 autoencoder_model:
   type: qc_data_preparation.helpers.dataset.TFPTModelDataset
   filepath: data/06_models/autoencoder_${formatted_classes}
-  model: TF_Autoencoder
+  load_args:
+    latent_dim: ${number_of_features}
 autoencoder_history:
   type: kedro_datasets.pickle.PickleDataSet
   filepath: data/08_reporting/history_${formatted_classes}.pkl
