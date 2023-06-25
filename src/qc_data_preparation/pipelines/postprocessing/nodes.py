@@ -5,7 +5,6 @@ import tensorflow as tf
 import torch as pt
 import plotly.graph_objects as go
 
-from ..training.autoencoder import TF_Autoencoder
 from ..training.autoencoder import PT_Autoencoder_Exp as PT_Autoencoder
 from ..training.nodes import add_channel_data
 
