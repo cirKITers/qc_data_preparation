@@ -6,19 +6,19 @@ mnist_data:
   type: qc_data_preparation.helpers.dataset.TensorFlowDataset
   filepath: data/01_raw/mnist.npz
 sorted_normalized_test_x:
-  type: kedro.extras.datasets.pickle.PickleDataSet
+  type: kedro_datasets.pickle.PickleDataSet
   filepath: data/05_model_input/sorted_normalized_test_x.pkl
   backend: dill
 sorted_test_y: 
-  type: kedro.extras.datasets.pickle.PickleDataSet
+  type: kedro_datasets.pickle.PickleDataSet
   filepath: data/02_intermediate/sorted_test_y.pkl
   backend: dill
 shuffled_normalized_train_x:
-  type: kedro.extras.datasets.pickle.PickleDataSet
+  type: kedro_datasets.pickle.PickleDataSet
   filepath: data/05_model_input/shuffled_normalized_train_x.pkl
   backend: dill
 shuffled_train_y:
-  type: kedro.extras.datasets.pickle.PickleDataSet
+  type: kedro_datasets.pickle.PickleDataSet
   filepath: data/02_intermediate/shuffled_train_y.pkl
   backend: dill
 autoencoder_model:
@@ -26,16 +26,16 @@ autoencoder_model:
   filepath: data/06_models/autoencoder_${formatted_classes}
   model: TF_Autoencoder
 autoencoder_history:
-  type: kedro.extras.datasets.pickle.PickleDataSet
+  type: kedro_datasets.pickle.PickleDataSet
   filepath: data/08_reporting/history_${formatted_classes}.pkl
   backend: dill
 loss_curve_json:
-  type: kedro.extras.datasets.plotly.JSONDataSet
+  type: kedro_datasets.plotly.JSONDataSet
   filepath: data/08_reporting/loss_curve.json
   fs_args:
     save_args_save: r
 accuracy_curve_json:
-  type: kedro.extras.datasets.plotly.JSONDataSet
+  type: kedro_datasets.plotly.JSONDataSet
   filepath: data/08_reporting/accuracy_curve.json
   fs_args:
     save_args_save: r

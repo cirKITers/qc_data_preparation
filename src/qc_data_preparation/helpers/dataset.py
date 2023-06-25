@@ -4,18 +4,19 @@ from pathlib import Path, PurePosixPath
 from typing import Any, Dict, Tuple
 
 import numpy as np
+import tensorflow as tf
+from tensorflow.keras.utils import get_file
+import torch
+from kedro.io import AbstractDataSet
+from kedro_datasets.tensorflow import TensorFlowModelDataset
+from kedro_datasets.plotly import JSONDataSet
+
+import plotly.graph_objects as go
+
 from qc_data_preparation.pipelines.training.autoencoder import (
     PT_Autoencoder,
     TF_Autoencoder,
 )
-import tensorflow as tf
-import torch
-from kedro.io import AbstractDataSet
-from kedro.extras.datasets.plotly import JSONDataSet
-from kedro.extras.datasets.tensorflow import TensorFlowModelDataset
-from keras.utils.data_utils import get_file
-
-import plotly.graph_objects as go
 
 
 class PlotlyDataSet(JSONDataSet):
