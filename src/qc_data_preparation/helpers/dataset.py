@@ -5,9 +5,9 @@ from typing import Any, Dict, Tuple
 
 import numpy as np
 import tensorflow as tf
+from tensorflow.keras.utils import get_file
 from kedro.io import AbstractDataSet
-from kedro.extras.datasets.plotly import JSONDataSet
-from keras.utils.data_utils import get_file
+from kedro_datasets.plotly import JSONDataSet
 
 import plotly.graph_objects as go
 
