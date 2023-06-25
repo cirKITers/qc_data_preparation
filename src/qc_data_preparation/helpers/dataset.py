@@ -147,8 +147,8 @@ class TFPTModelDataset(AbstractDataSet):
     def __init__(
         self,
         filepath: str,
-        load_args: Dict[str, Any] = None,
-        save_args: Dict[str, Any] = None,
+        load_args: "Dict[str, Any] | None" = None,
+        save_args: "Dict[str, Any] | None" = None,
     ) -> None:
         self._save_args = {} if not save_args else save_args
         self._load_args = {} if not load_args else load_args
