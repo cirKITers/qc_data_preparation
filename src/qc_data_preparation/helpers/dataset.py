@@ -1,10 +1,10 @@
 import os
 import sys
-import fsspec
 import logging
 from pathlib import Path, PurePosixPath
 from typing import Any, Dict, Tuple
 
+import fsspec
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.utils import get_file
