@@ -201,7 +201,7 @@ class TFPTModelDataset(AbstractDataSet):
             )
 
         load_args = self._load_args.copy()
-        del load_args["latent_dim"]
+        del load_args["latent_dim"]  # needs to be deleted for proper loading
         load_args["custom_objects"] = {"ssim": ssim}
         self._model_io = TensorFlowModelDataSet(
             filepath=self._filepath,
