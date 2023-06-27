@@ -178,7 +178,7 @@ class TFPTModelDataset(AbstractDataSet):
                 return self._model_io._load()
             except IsADirectoryError:
                 pass
-            raise TypeError(f"Type of model in {self._filepath} is not supported")
+        raise TypeError(f"Type of model in {self._filepath} is not supported")
 
     def _init_pt_io(self):
         self._model_io = PTModelDataset(
