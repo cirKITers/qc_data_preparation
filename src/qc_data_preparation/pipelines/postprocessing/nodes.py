@@ -5,7 +5,6 @@ import tensorflow as tf
 import torch as pt
 import plotly.graph_objects as go
 
-from ..training.autoencoder import PT_Autoencoder_Exp as PT_Autoencoder
 from ..training.nodes import add_channel_data
 
 
@@ -16,10 +15,10 @@ def encode_data(
     classes: List,
 ) -> Dict[str, Any]:
     # check based on the type if we are using TF or PT framework
-    if type(model) == PT_Autoencoder:
+    if issubclass(type(model), pt.nn.Module):
         with pt.no_grad():  # have to use no_grad as the tensor requires grad otherwise
             features = model.encoder(pt.Tensor(add_channel_data(values_x))).numpy()
-    elif type(model).__name__ == "TF_Autoencoder":
+    elif issubclass(type(model), tf.keras.Model):
         features = model.encoder(values_x).numpy()
     else:
         raise TypeError(
