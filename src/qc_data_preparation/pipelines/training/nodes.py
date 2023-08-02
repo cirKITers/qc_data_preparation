@@ -38,9 +38,6 @@ def train_tf_model(
     tf.random.set_seed(seed)
 
     # defining custom ssim to set the parameters accordingly
-    # note that we are not using multiscale_ssim although tf should make use of batches
-    # using multiscale_ssim however, results in error
-
     # we need that for saving the model (load via {'ssim':ssim})
     @tf.keras.utils.register_keras_serializable()
     def ssim(pred, target):
