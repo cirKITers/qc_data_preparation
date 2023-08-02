@@ -5,12 +5,22 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Kedro: Default",
+            "name": "Kedro: PT Default",
             "type": "python",
             "request": "launch",
             "console": "integratedTerminal",
             "module": "kedro",
             "args": ["run"]
+            // Any other arguments should be passed as a comma-seperated-list
+            // e.g "args": ["run", "--pipeline", "pipeline_name"]
+        },
+        {
+            "name": "Kedro: TF Default",
+            "type": "python",
+            "request": "launch",
+            "console": "integratedTerminal",
+            "module": "kedro",
+            "args": ["run", "--pipeline", "tf_default"]
             // Any other arguments should be passed as a comma-seperated-list
             // e.g "args": ["run", "--pipeline", "pipeline_name"]
         },
