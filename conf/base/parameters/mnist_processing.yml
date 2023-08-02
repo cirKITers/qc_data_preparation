@@ -1,8 +1,0 @@
-data_preprocessing:
-  number_of_features: 8
-  classes: ${classes|[1, 2, 3, 4]}
-  train_ipc: 500
-  test_ipc: 100
-  seed: 1337
-  training:
-    epochs: 300

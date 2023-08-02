@@ -1,0 +1,9 @@
+training:
+  number_of_features: ${number_of_features}
+  seed: 1337
+  epochs: 800
+  batch_size: 32 
+  ssim_filter_size: 11 
+  ssim_sigma: 1.5
+  ssim_k1: 0.01
+  ssim_k2: 0.03

@@ -1,0 +1,2 @@
+postprocessing:
+  classes: ${classes}

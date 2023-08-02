@@ -5,35 +5,47 @@
 mnist_data:
   type: qc_data_preparation.helpers.dataset.TensorFlowDataset
   filepath: data/01_raw/mnist.npz
-data_preprocessing.sorted_normalized_test_x:
+sorted_normalized_test_x:
   type: kedro_datasets.pickle.PickleDataSet
   filepath: data/05_model_input/sorted_normalized_test_x.pkl
   backend: dill
-data_preprocessing.sorted_test_y: 
+sorted_test_y: 
   type: kedro_datasets.pickle.PickleDataSet
   filepath: data/02_intermediate/sorted_test_y.pkl
   backend: dill
-data_preprocessing.shuffled_normalized_train_x:
+shuffled_normalized_train_x:
   type: kedro_datasets.pickle.PickleDataSet
   filepath: data/05_model_input/shuffled_normalized_train_x.pkl
   backend: dill
-data_preprocessing.shuffled_train_y:
+shuffled_train_y:
   type: kedro_datasets.pickle.PickleDataSet
   filepath: data/02_intermediate/shuffled_train_y.pkl
   backend: dill
-data_preprocessing.autoencoder_model:
-  type: kedro_datasets.tensorflow.TensorFlowModelDataSet
+autoencoder_model:
+  type: qc_data_preparation.helpers.dataset.TFPTModelDataset
   filepath: data/06_models/autoencoder_${formatted_classes}
-data_preprocessing.autoencoder_history:
+  load_args:
+    latent_dim: ${number_of_features}
+autoencoder_history:
   type: kedro_datasets.pickle.PickleDataSet
   filepath: data/08_reporting/history_${formatted_classes}.pkl
   backend: dill
-data_preprocessing.loss_curve:
-  type: kedro_datasets.matplotlib.MatplotlibWriter
-  filepath: data/08_reporting/loss_curve.png
-data_preprocessing.accuracy_curve:
-  type: kedro_datasets.matplotlib.MatplotlibWriter
-  filepath: data/08_reporting/accuracy_curve.png
+loss_curve_json:
+  type: kedro_datasets.plotly.JSONDataSet
+  filepath: data/08_reporting/loss_curve.json
+  fs_args:
+    save_args_save: r
+accuracy_curve_json:
+  type: kedro_datasets.plotly.JSONDataSet
+  filepath: data/08_reporting/accuracy_curve.json
+  fs_args:
+    save_args_save: r
+loss_curve_html:
+  type: qc_data_preparation.helpers.dataset.PlotlyDataSet
+  filepath: data/08_reporting/loss_curve.html
+accuracy_curve_html:
+  type: qc_data_preparation.helpers.dataset.PlotlyDataSet
+  filepath: data/08_reporting/accuracy_curve.html
 encoded_train_data:
   type: kedro_datasets.pickle.PickleDataSet
   filepath: data/07_model_output/encoded_train_data_${formatted_classes}.pkl
