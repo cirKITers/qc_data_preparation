@@ -41,6 +41,11 @@ def train_tf_model(
     # we need that for saving the model (load via {'ssim':ssim})
     @tf.keras.utils.register_keras_serializable()
     def ssim(pred, target):
+        # add a BW channel (N, H, W) -> (N, H, W, 1)
+        # TODO: move that in preprocessing (requires adjustment of model to return channel)
+        pred = tf.expand_dims(pred, axis=3) if len(pred.shape) == 3 else pred 
+        target = tf.expand_dims(target, axis=3) if len(target.shape) == 3 else target 
+
         return tf.image.ssim(
             pred,
             target,
